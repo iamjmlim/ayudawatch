@@ -1,0 +1,78 @@
+name: News pipeline
+
+on:
+  schedule:
+    - cron: '*/30 * * * *' # every 30 minutes (UTC); GitHub may start it a few minutes late
+  workflow_dispatch: {} # "Run workflow" button for manual runs
+
+# Never run two pipelines at once; a late run waits instead of duplicating work.
+concurrency:
+  group: news-pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # A library uses Node's old url.parse(); the warning is harmless and only clutters logs.
+      NODE_OPTIONS: --no-deprecation
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Ingest feeds and group stories
+        run: npm run ingest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Check source links still work
+        run: npm run linkcheck
+        continue-on-error: true # a link-check hiccup must never block publishing
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Summarize, check and publish
+        run: npm run summarize
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          AI_PROVIDER: gemini
+          AI_FALLBACK_PROVIDER: groq
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          AI_DAILY_LIMIT: ${{ vars.AI_DAILY_LIMIT || '100' }}
+          # Lets the pipeline refresh the website after publishing (optional).
+          SITE_URL: ${{ vars.SITE_URL }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+          STORIES_PER_RUN: ${{ vars.STORIES_PER_RUN || '6' }}
+
+      - name: Post to Facebook Page
+        run: npm run facebook
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          FB_LANG: ${{ vars.FB_LANG || 'fil' }}
+          FB_DAILY_LIMIT: ${{ vars.FB_DAILY_LIMIT || '12' }}
+
+      - name: Send daily email digest (once a day after 7 AM PHT)
+        run: npm run digest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
