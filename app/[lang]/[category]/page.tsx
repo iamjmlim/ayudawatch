@@ -4,6 +4,7 @@ import { hreflang } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 import { StoryList, StoryListSkeleton } from '@/components/site/story-list';
 import { OfficialLinks } from '@/components/site/official-links';
+import { GuideLinks } from '@/components/site/guide-links';
 import { CATEGORY_SLUGS, getDictionary, isCategory, isLocale } from '@/lib/i18n';
 import { getLatestStories } from '@/lib/news';
 
@@ -34,6 +35,7 @@ async function CategoryStories({ params }: { params: Params }) {
         {t.categories[category]}
       </h1>
       <OfficialLinks category={category} locale={lang} />
+      <GuideLinks category={category} locale={lang} />
       <StoryList stories={stories} locale={lang} lead={false} category={category} />
     </>
   );

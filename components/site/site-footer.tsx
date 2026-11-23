@@ -14,6 +14,11 @@ export function SiteFooter({ locale }: { locale: Locale }) {
         </div>
         <ul className="sm:justify-self-end">
           <li>
+            <Link href={`/${locale}/guides`} className="inline-flex min-h-11 items-center hover:underline">
+              {t.guides}
+            </Link>
+          </li>
+          <li>
             <Link href={`/${locale}/about`} className="inline-flex min-h-11 items-center hover:underline">
               {t.about}
             </Link>

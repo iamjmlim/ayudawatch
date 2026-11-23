@@ -12,7 +12,10 @@ type Item = { href: string; label: string };
 export function SectionNav({ items, label }: { items: Item[]; label: string }) {
   const pathname = usePathname() ?? '';
   // A story page belongs to no tab; only exact section paths are "current".
-  const current = items.find((i) => pathname === i.href || pathname === `${i.href}/`)?.href;
+  const current =
+    items.find((i) => pathname === i.href || pathname === `${i.href}/`)?.href ??
+    // Inside a section (e.g. /en/guides/some-guide): highlight that section, never the home tab.
+    items.find((i) => i.href.split('/').length > 2 && pathname.startsWith(`${i.href}/`))?.href;
   const activeRef = useRef<HTMLAnchorElement>(null);
 
   // On phones the row scrolls: bring the current section into view.

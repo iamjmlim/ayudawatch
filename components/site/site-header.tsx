@@ -10,6 +10,7 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
   // Only sections with recent stories get a tab; the rest would be empty pages.
   const items = [
     { href: `/${locale}`, label: t.navTop },
+    { href: `/${locale}/guides`, label: t.guides },
     ...CATEGORY_SLUGS.filter((c) => active.has(c)).map((c) => ({ href: `/${locale}/${c}`, label: t.categories[c] })),
   ];
   return (
