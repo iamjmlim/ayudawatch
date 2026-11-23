@@ -66,6 +66,8 @@ const en = {
   noStoriesCta: 'See today’s top stories',
   moreIn: (section: string) => `More in ${section}`,
   backHome: 'Back to top stories',
+  sectionDescription: (section: string) =>
+    `${section}: the latest Philippine government benefits and aid updates, in English and Filipino, each linked to the official source. Not a government website.`,
   switchLanguage: 'Filipino',
   switchLanguageLabel: 'Basahin sa Filipino',
   about: 'How it works',
@@ -161,6 +163,8 @@ const fil: Dictionary = {
   noStoriesCta: 'Tingnan ang ulo ng balita',
   moreIn: (section: string) => `Iba pa sa ${section}`,
   backHome: 'Bumalik sa ulo ng balita',
+  sectionDescription: (section: string) =>
+    `${section}: mga pinakabagong update sa benepisyo at ayuda ng gobyerno, sa Filipino at English, may link sa opisyal na source. Hindi ito website ng gobyerno.`,
   switchLanguage: 'English',
   switchLanguageLabel: 'Read in English',
   about: 'Paano ito gumagana',

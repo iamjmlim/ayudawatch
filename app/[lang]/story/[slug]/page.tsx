@@ -10,6 +10,8 @@ import { DigestSignup } from '@/components/site/digest-signup';
 import { OfficialLinks } from '@/components/site/official-links';
 import { formatDateTime, getDictionary, isLocale } from '@/lib/i18n';
 import { getLatestStories, getRecentSlugs, getStory } from '@/lib/news';
+import { newsArticle } from '@/lib/structured-data';
+import { JsonLd } from '@/components/site/json-ld';
 
 type Params = Promise<{ lang: string; slug: string }>;
 
@@ -73,6 +75,7 @@ async function StoryBody({ params }: { params: Params }) {
 
   return (
     <article className="mx-auto max-w-[42rem] py-8 sm:py-10">
+      <JsonLd data={newsArticle(story, lang)} />
       <Link
         href={`/${lang}`}
         className="mb-6 inline-flex min-h-11 items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"

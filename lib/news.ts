@@ -132,6 +132,35 @@ export async function getStory(slug: string, locale: Locale): Promise<Story | nu
   return data ? toStory(data as unknown as Row, locale) : null;
 }
 
+export type SitemapStory = {
+  slug: string;
+  publishedAt: string;
+  updatedAt: string;
+  headlines: { lang: Locale; headline: string }[];
+};
+
+// Published stories for the sitemaps: newest first, with last-change time and headlines.
+export async function getSitemapStories(limit = 500): Promise<SitemapStory[]> {
+  'use cache';
+  cacheLife({ stale: 300, revalidate: 600, expire: 86400 });
+  cacheTag('stories');
+
+  const { data, error } = await publicDb()
+    .from('stories')
+    .select('slug, published_at, updated_at, summary_updated_at, summaries(lang, headline)')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(`Loading sitemap stories failed: ${error.message}`);
+  type R = { slug: string; published_at: string; updated_at: string; summary_updated_at: string | null; summaries: { lang: Locale; headline: string }[] };
+  return ((data ?? []) as unknown as R[]).map((r) => ({
+    slug: r.slug,
+    publishedAt: r.published_at,
+    updatedAt: [r.published_at, r.summary_updated_at].filter(Boolean).sort().at(-1)!,
+    headlines: r.summaries,
+  }));
+}
+
 export async function getRecentSlugs(limit = 30): Promise<string[]> {
   'use cache';
   cacheLife({ stale: 300, revalidate: 600, expire: 86400 });

@@ -5,6 +5,8 @@ import { rankStories, StoryList, StoryListSkeleton } from '@/components/site/sto
 import { DigestSignup } from '@/components/site/digest-signup';
 import { formatDate, formatTime, getDictionary, isLocale } from '@/lib/i18n';
 import { getLatestStories } from '@/lib/news';
+import { website } from '@/lib/structured-data';
+import { JsonLd } from '@/components/site/json-ld';
 
 async function HomeStories({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
@@ -18,6 +20,7 @@ async function HomeStories({ params }: { params: Promise<{ lang: string }> }) {
 
   return (
     <>
+      <JsonLd data={website(lang, t.description)} />
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-0.5 border-b border-border pt-5 pb-3 sm:pt-7 sm:pb-4">
         <h1 className="font-serif text-xl font-semibold tracking-tight sm:text-3xl">{t.topStories}</h1>
         {lastChange && (
