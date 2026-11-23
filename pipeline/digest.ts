@@ -1,4 +1,4 @@
-// Daily email digest ("Ulo ng balita ngayong umaga"): the day's top stories,
+// Daily email digest: the day's top benefits and aid updates,
 // sent once a day through Buttondown after 7:00 AM Philippine time.
 // Runs inside the every-30-minutes pipeline and remembers the last send date.
 //
@@ -23,7 +23,7 @@ const SITE_URL = (process.env.SITE_URL || 'https://ayudawatch.vercel.app').repla
 const DIGEST_HOUR = Number(process.env.DIGEST_HOUR ?? 7);
 const STORY_COUNT = Number(process.env.DIGEST_STORIES ?? 5);
 const SEND_STATUS = process.env.DIGEST_SEND_STATUS || 'about_to_send';
-const MIN_STORIES = 3;
+const MIN_STORIES = Number(process.env.DIGEST_MIN_STORIES ?? 2); // benefits news is slower than general news
 
 const db = getDb();
 
@@ -125,7 +125,7 @@ async function main() {
     '',
     '---',
     '',
-    `Isinulat ng AI ang mga buod na ito mula sa mga ulat ng mga news outlet, at may link sa bawat orihinal. [Paano ito gumagana](${SITE_URL}/fil/about) · [Buong balita sa Buod Daily](${SITE_URL}/fil)`,
+    `Isinulat ng AI ang mga buod na ito mula sa mga ulat ng mga news outlet, at may link sa bawat orihinal. [Paano ito gumagana](${SITE_URL}/fil/about) · [Mga gabay](${SITE_URL}/fil/guides) · [Buong update sa AyudaWatch](${SITE_URL}/fil)`,
   ].join('\n');
 
   console.log(`Subject: ${subject}\n\n${body}\n`);
