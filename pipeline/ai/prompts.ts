@@ -1,7 +1,7 @@
 // Versioned prompt. Bump PROMPT_VERSION whenever the wording changes,
 // so every saved summary records which prompt produced it.
 
-export const PROMPT_VERSION = 'ayuda-v1';
+export const PROMPT_VERSION = 'ayuda-v2';
 
 export const CATEGORIES = [
   'ayuda', // DSWD, 4Ps, AICS, subsidies and cash aid
@@ -49,7 +49,7 @@ CLASSIFY:
   - otherwise "normal".
 
 SKIP:
-- Set "skip": true (and leave the text fields as empty strings) if the story is NOT mainly about a government benefit, aid program, ID or document, tax, school or work announcement, holiday, or government-set price; or if the sources are opinion columns, sponsored/advertising content, horoscopes, quizzes, live blogs with no clear facts, or do not contain enough facts for an accurate summary. Put the reason in "skip_reason".
+- Set "skip": true (and leave the text fields as empty strings) if the story is NOT mainly about a government benefit, aid program, ID or document, tax, school or work announcement, holiday, or government-set price FOR FILIPINOS (skip stories that mainly concern foreign nationals, e.g. visas for foreigners); or if the sources are opinion columns, sponsored/advertising content, horoscopes, quizzes, live blogs with no clear facts, or do not contain enough facts for an accurate summary. Put the reason in "skip_reason".
 
 Respond with ONLY a JSON object with exactly these keys:
 {"skip": boolean, "skip_reason": string, "category": string, "sensitivity": string,
