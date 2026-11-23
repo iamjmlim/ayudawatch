@@ -3,6 +3,10 @@
 //
 //   npm run facebook              -> post / remove for real
 //   npm run facebook -- --dry-run -> print what it would post, touch nothing
+//   npm run facebook -- --dry-run --guide -> preview the next weekly guide post
+//
+// Once a week (FB_GUIDE_DAY, default 1 = Monday, from FB_GUIDE_HOUR = 9 AM PHT)
+// it posts one evergreen guide instead of a story, rotating through all guides.
 //
 // Settings (env):
 //   FB_PAGE_ID, FB_PAGE_TOKEN   required; without them this step does nothing
@@ -13,6 +17,7 @@
 
 import { check, getDb } from './lib/db.ts';
 import { firstSentences } from '../lib/excerpt.ts';
+import { GUIDES } from '../lib/guides/index.ts';
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const PAGE_ID = process.env.FB_PAGE_ID;
@@ -22,6 +27,9 @@ const DAILY_LIMIT = Number(process.env.FB_DAILY_LIMIT ?? 12);
 const MIN_GAP_MINUTES = Number(process.env.FB_MIN_GAP_MINUTES ?? 60);
 const LANG = process.env.FB_LANG === 'en' ? 'en' : 'fil';
 const FRESH_HOURS = 6; // only post stories published in the last 6 hours
+const GUIDE_DAY = Number(process.env.FB_GUIDE_DAY ?? 1); // weekday for the weekly guide post, 0 = Sunday (Philippine time)
+const GUIDE_HOUR = Number(process.env.FB_GUIDE_HOUR ?? 9); // earliest hour for it, Philippine time
+const FORCE_GUIDE = process.argv.includes('--guide'); // with --dry-run: preview the next guide post now
 const GRAPH = 'https://graph.facebook.com';
 
 const db = getDb();
@@ -100,6 +108,44 @@ async function removeUnpublished(stats: { removed: number }) {
   }
 }
 
+// ---------- weekly guide post ----------
+// Once a week (default Monday from 9 AM Philippine time) one evergreen guide is
+// posted instead of a news story, rotating through GUIDES in order. The last
+// guide posted is remembered in settings.fb_guide_state.
+
+type GuideState = { last_slug?: string; last_posted_at?: string; last_post_id?: string };
+
+async function getGuideState(): Promise<GuideState> {
+  const row = check(
+    await db.from('settings').select('value').eq('key', 'fb_guide_state').maybeSingle(),
+    'read guide state',
+  ) as { value: GuideState } | null;
+  return row?.value ?? {};
+}
+
+function nextGuide(state: GuideState) {
+  const i = GUIDES.findIndex((g) => g.slug === state.last_slug);
+  return GUIDES[(i + 1) % GUIDES.length]; // i = -1 (none yet) starts at the first guide
+}
+
+function guideIsDue(state: GuideState): boolean {
+  if (FORCE_GUIDE) return true;
+  const ph = new Date(Date.now() + 8 * 3_600_000);
+  if (ph.getUTCDay() !== GUIDE_DAY || ph.getUTCHours() < GUIDE_HOUR) return false;
+  const last = state.last_posted_at ? Date.parse(state.last_posted_at) : 0;
+  return Date.now() - last > 6 * 24 * 3_600_000; // at most once a week
+}
+
+function guideText(guide: (typeof GUIDES)[number]): { message: string; link: string } {
+  const t = guide[LANG];
+  const link = `${SITE_URL}/${LANG}/guides/${guide.slug}`;
+  const lines =
+    LANG === 'fil'
+      ? [`GABAY: ${t.title}`, t.description, `Basahin ang buong gabay: ${link}`, 'Hindi ito website ng gobyerno. Laging kumpirmahin sa opisyal na ahensya.']
+      : [`GUIDE: ${t.title}`, t.description, `Read the full guide: ${link}`, 'Not a government website. Always confirm with the official agency.'];
+  return { message: lines.join('\n\n'), link };
+}
+
 async function main() {
   if ((!PAGE_ID || !TOKEN) && !DRY_RUN) {
     console.log('Facebook not configured (FB_PAGE_ID / FB_PAGE_TOKEN missing). Skipping.');
@@ -122,15 +168,34 @@ async function main() {
     await db.from('stories').select('fb_posted_at').gte('fb_posted_at', philippineDayStart()).order('fb_posted_at', { ascending: false }),
     'count today posts',
   ) as { fb_posted_at: string }[];
-  stats.postedToday = today.length;
   const last = check(
     await db.from('stories').select('fb_posted_at').not('fb_posted_at', 'is', null).order('fb_posted_at', { ascending: false }).limit(1),
     'last post',
   ) as { fb_posted_at: string }[];
-  const minutesSinceLast = last[0] ? (Date.now() - Date.parse(last[0].fb_posted_at)) / 60_000 : Infinity;
+  // Guide posts count toward the same daily cap and gap as news posts.
+  const guideState = await getGuideState();
+  const guideAt = guideState.last_posted_at ?? null;
+  const postedToday = today.length + (guideAt && guideAt >= philippineDayStart() ? 1 : 0);
+  stats.postedToday = postedToday;
+  const lastAt = [last[0]?.fb_posted_at, guideAt].filter(Boolean).map((d) => Date.parse(d!));
+  const minutesSinceLast = lastAt.length ? (Date.now() - Math.max(...lastAt)) / 60_000 : Infinity;
 
-  if (today.length >= DAILY_LIMIT) stats.reason = `daily limit reached (${today.length}/${DAILY_LIMIT})`;
+  if (postedToday >= DAILY_LIMIT) stats.reason = `daily limit reached (${postedToday}/${DAILY_LIMIT})`;
   else if (minutesSinceLast < MIN_GAP_MINUTES) stats.reason = `last post ${Math.round(minutesSinceLast)} min ago (gap ${MIN_GAP_MINUTES})`;
+
+  if (!stats.reason && GUIDES.length && guideIsDue(guideState)) {
+    const guide = nextGuide(guideState);
+    const post = guideText(guide);
+    console.log(`✓ GUIDE POST (${guide.slug}):\n${post.message.replace(/^/gm, '   ')}\n`);
+    if (!DRY_RUN) {
+      const res = await graph('POST', `${PAGE_ID}/feed`, { message: post.message, link: post.link });
+      const value: GuideState = { last_slug: guide.slug, last_posted_at: new Date().toISOString(), last_post_id: res.id };
+      check(await db.from('settings').upsert({ key: 'fb_guide_state', value }), 'save guide state');
+      console.log(`   posted: ${res.id}`);
+    }
+    stats.posted++;
+    stats.reason = 'weekly guide posted';
+  }
 
   if (!stats.reason) {
     const since = new Date(Date.now() - FRESH_HOURS * 3_600_000).toISOString();
