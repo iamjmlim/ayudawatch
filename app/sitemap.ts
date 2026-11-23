@@ -2,6 +2,7 @@ import type { MetadataRoute } from 'next';
 import { CATEGORY_SLUGS, LOCALES } from '@/lib/i18n';
 import { getRecentSlugs } from '@/lib/news';
 import { GUIDES } from '@/lib/guides';
+import { CALCULATORS } from '@/lib/calculators';
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
@@ -13,6 +14,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/corrections',
     '/guides',
     ...GUIDES.map((g) => `/guides/${g.slug}`),
+    '/calculators',
+    ...CALCULATORS.map((c) => `/calculators/${c.slug}`),
+    '/which-benefits',
+    '/walang-pasok',
     ...CATEGORY_SLUGS.map((c) => `/${c}`),
     ...slugs.map((s) => `/story/${s}`),
   ];

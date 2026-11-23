@@ -19,6 +19,7 @@ export const CATEGORY_SLUGS = [
   'buwis',
   'holiday',
   'presyo',
+  'babala',
 ] as const;
 export type CategorySlug = (typeof CATEGORY_SLUGS)[number];
 
@@ -49,6 +50,7 @@ const en = {
     buwis: 'Taxes',
     holiday: 'Holidays',
     presyo: 'Prices & fares',
+    babala: 'Scam alerts',
   } satisfies Record<CategorySlug, string>,
   whyItMatters: 'What it means for you',
   reportedBy: 'Reported by',
@@ -81,6 +83,25 @@ const en = {
   guideSource: 'Official source',
   guideNotice:
     'AyudaWatch is not a government website and does not process applications. This guide is based only on the official page above; if anything differs, the official page is correct.',
+  calculators: 'Calculators',
+  calculatorsTitle: 'Benefit calculators',
+  calculatorsIntro:
+    'Estimate your SSS benefits with the formulas on the official SSS pages. Results are estimates: the amount SSS approves is final.',
+  calcNotice:
+    'This is an estimate, not an official SSS computation. It uses only the formula on the official page linked below and the numbers you enter. AyudaWatch does not save what you type.',
+  calcGuide: 'Read the full guide',
+  calcCta: 'Estimate your benefit',
+  checker: 'Which benefits?',
+  checkerTitle: 'Which benefits can I get?',
+  checkerIntro:
+    'Tick what applies to you to see the guides and calculators that may help. This only points you to information; the agency decides who qualifies.',
+  checkerResults: 'Guides and calculators that may help',
+  checkerNone: 'Tick at least one item to see guides.',
+  suspensions: 'Walang pasok',
+  suspensionsTitle: 'Class and work suspensions',
+  suspensionsIntro:
+    'Class and work suspension announcements from the last 36 hours, from official sources and news reports. Always confirm with your LGU, school or DepEd before staying home.',
+  suspensionsNone: 'No class or work suspension announcements in the last 36 hours.',
   digestTitle: 'Benefit updates, every morning',
   digestBody: 'The day’s most important benefits and aid updates in your inbox at 7 AM Philippine time, in Filipino and English.',
   digestEmail: 'Your email',
@@ -124,6 +145,7 @@ const fil: Dictionary = {
     buwis: 'Buwis',
     holiday: 'Holiday',
     presyo: 'Presyo at pamasahe',
+    babala: 'Babala sa scam',
   },
   whyItMatters: 'Para sa iyo',
   reportedBy: 'Iniulat ng',
@@ -156,6 +178,25 @@ const fil: Dictionary = {
   guideSource: 'Opisyal na source',
   guideNotice:
     'Ang AyudaWatch ay hindi website ng gobyerno at hindi nagpoproseso ng aplikasyon. Batay lamang ang gabay na ito sa opisyal na pahina sa itaas; kung may pagkakaiba, ang opisyal na pahina ang tama.',
+  calculators: 'Mga calculator',
+  calculatorsTitle: 'Mga benefit calculator',
+  calculatorsIntro:
+    'Tantiyahin ang mga benepisyo mo sa SSS gamit ang mga formula sa opisyal na pahina ng SSS. Tantiya lamang ang resulta: ang halagang aaprubahan ng SSS ang pinal.',
+  calcNotice:
+    'Tantiya lamang ito, hindi opisyal na kuwenta ng SSS. Ang formula lang sa opisyal na pahinang naka-link sa ibaba at ang mga numerong inilagay mo ang ginagamit nito. Hindi sine-save ng AyudaWatch ang tina-type mo.',
+  calcGuide: 'Basahin ang buong gabay',
+  calcCta: 'Tantiyahin ang benepisyo mo',
+  checker: 'Aling benepisyo?',
+  checkerTitle: 'Anong benepisyo ang puwede sa akin?',
+  checkerIntro:
+    'Lagyan ng tsek ang mga tugma sa iyo para makita ang mga gabay at calculator na makakatulong. Itinuturo lang nito ang impormasyon; ang ahensya ang magpapasya kung sino ang qualified.',
+  checkerResults: 'Mga gabay at calculator na makakatulong',
+  checkerNone: 'Lagyan ng tsek ang kahit isa para makita ang mga gabay.',
+  suspensions: 'Walang pasok',
+  suspensionsTitle: 'Walang pasok: suspensyon ng klase at trabaho',
+  suspensionsIntro:
+    'Mga anunsyo ng suspensyon ng klase at trabaho sa nakaraang 36 na oras, mula sa opisyal na source at mga ulat ng balita. Laging kumpirmahin sa LGU, paaralan o DepEd bago hindi pumasok.',
+  suspensionsNone: 'Walang anunsyo ng suspensyon ng klase o trabaho sa nakaraang 36 na oras.',
   digestTitle: 'Update sa benepisyo, tuwing umaga',
   digestBody: 'Ang pinakamahalagang update sa ayuda at benepisyo sa iyong inbox, 7 AM oras sa Pilipinas, sa Filipino at English.',
   digestEmail: 'Iyong email',
@@ -211,3 +252,15 @@ export function formatDate(iso: string, locale: Locale): string {
     year: 'numeric',
   }).format(new Date(iso));
 }
+
+// Short intros for sections that need context (most sections have none).
+export const CATEGORY_INTROS: Record<Locale, Partial<Record<CategorySlug, string>>> = {
+  en: {
+    holiday: 'Announcements of regular and special non-working days, from official proclamations and news reports. The official proclamation is final.',
+    babala: 'Official warnings about scams, fake pages, fake text messages and fixers that use government benefits or agencies. Agencies never ask for payment or passwords through personal messages.',
+  },
+  fil: {
+    holiday: 'Mga anunsyo ng regular at special non-working day, mula sa opisyal na proklamasyon at mga ulat ng balita. Ang opisyal na proklamasyon ang pinal.',
+    babala: 'Mga opisyal na babala tungkol sa scam, pekeng page, pekeng text at fixer na gumagamit ng benepisyo o ahensya ng gobyerno. Hindi humihingi ng bayad o password ang mga ahensya sa personal na mensahe.',
+  },
+};

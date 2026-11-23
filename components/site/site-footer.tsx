@@ -19,6 +19,16 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             </Link>
           </li>
           <li>
+            <Link href={`/${locale}/calculators`} className="inline-flex min-h-11 items-center hover:underline">
+              {t.calculators}
+            </Link>
+          </li>
+          <li>
+            <Link href={`/${locale}/which-benefits`} className="inline-flex min-h-11 items-center hover:underline">
+              {t.checker}
+            </Link>
+          </li>
+          <li>
             <Link href={`/${locale}/about`} className="inline-flex min-h-11 items-center hover:underline">
               {t.about}
             </Link>

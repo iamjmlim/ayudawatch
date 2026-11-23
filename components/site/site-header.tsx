@@ -11,6 +11,8 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
   const items = [
     { href: `/${locale}`, label: t.navTop },
     { href: `/${locale}/guides`, label: t.guides },
+    { href: `/${locale}/calculators`, label: t.calculators },
+    { href: `/${locale}/walang-pasok`, label: t.suspensions },
     ...CATEGORY_SLUGS.filter((c) => active.has(c)).map((c) => ({ href: `/${locale}/${c}`, label: t.categories[c] })),
   ];
   return (

@@ -23,6 +23,8 @@ const TOPICS: RegExp[] = [
   /(regular|special|national|local) (non-working )?holidays?|holidays? (declared|on|pay)|declares? .{0,30}holidays?|non-working|special working day|work suspension|suspension of work/i,
   // Prices that government sets or controls
   /price (freeze|ceiling)|suggested retail price|\bSRP\b|power rate|meralco rate|fare (hike|increase|matrix)|toll (fee|rate)/i,
+  // Scam warnings that use benefits or agencies
+  /\bscam|scammer|modus|phishing|fake (page|pages|account|website|text|sms)|fixers?\b|budol|panloloko|huwag (maniwala|magpaloko)|hindi (lehitimo|totoo)/i,
 ];
 
 // Notices that mention a topic word but aren't news readers can use.

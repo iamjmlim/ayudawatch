@@ -46,4 +46,6 @@ export const OFFICIAL_LINKS: Record<CategorySlug, OfficialLink[]> = {
     { name: 'LTFRB (fares)', url: 'https://ltfrb.gov.ph' },
     { name: 'ERC (power rates)', url: 'https://www.erc.gov.ph' },
   ],
+  // Scam warnings link to the agency named in each story; no single official site.
+  babala: [],
 };

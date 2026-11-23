@@ -1,7 +1,7 @@
 // Versioned prompt. Bump PROMPT_VERSION whenever the wording changes,
 // so every saved summary records which prompt produced it.
 
-export const PROMPT_VERSION = 'ayuda-v3';
+export const PROMPT_VERSION = 'ayuda-v4';
 
 export const CATEGORIES = [
   'ayuda', // DSWD, 4Ps, AICS, subsidies and cash aid
@@ -15,6 +15,7 @@ export const CATEGORIES = [
   'buwis', // BIR and taxes
   'holiday', // holidays and work suspensions
   'presyo', // government-set prices, fares and rates
+  'babala', // official warnings about scams, fake pages and fixers using a benefit or agency
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
@@ -27,7 +28,7 @@ You receive one news story as reported by one or more Philippine outlets. Write 
 
 FIRST, DECIDE IF IT BELONGS ON AYUDAWATCH:
 - who_is_affected: a short phrase naming who this news changes things for, e.g. "SSS pensioners", "OFWs in Taiwan", "students in Surigao del Sur", "Chinese tourists", "no one in particular".
-- for_filipinos: true ONLY if the news changes what Filipinos in the Philippines or OFWs can GET (a benefit, aid, service, ID or document), must DO (a deadline, requirement, schedule, registration), or must PAY (a government-set price, fee, rate or tax), or announces a holiday, a class suspension or a work suspension, or reports government aid or services being delivered to Filipinos.
+- for_filipinos: true ONLY if the news changes what Filipinos in the Philippines or OFWs can GET (a benefit, aid, service, ID or document), must DO (a deadline, requirement, schedule, registration), or must PAY (a government-set price, fee, rate or tax), or announces a holiday, a class suspension or a work suspension, or reports government aid or services being delivered to Filipinos, or warns Filipinos about scams, fake pages, fake text messages or fixers that use a government benefit or agency.
   It is false for: visas or entry rules for foreigners; budget debates, politics and statements with no change for recipients; politicians personally handing out help; suspensions, charges or cases against officials or private people; crime and traffic violations; strikes and protests; company, product, lifestyle, shopping or holiday-season features; market or economic statistics.
 - If for_filipinos is false, set "skip": true.
 

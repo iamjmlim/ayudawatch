@@ -2,7 +2,8 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ExternalLink, ShieldCheck } from 'lucide-react';
+import { Calculator, ExternalLink, ShieldCheck } from 'lucide-react';
+import { CALCULATORS } from '@/lib/calculators';
 import { hreflang } from '@/lib/seo';
 import { getDictionary, isLocale, type Locale } from '@/lib/i18n';
 import { GUIDES, getGuide, type GuideSection } from '@/lib/guides';
@@ -74,6 +75,7 @@ async function GuideBody({ params }: { params: Params }) {
   const t = getDictionary(lang);
   const text = guide[lang];
   const checked = formatDate(guide.checkedOn, lang);
+  const calc = CALCULATORS.find((c) => c.guideSlug === guide.slug);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -121,6 +123,16 @@ async function GuideBody({ params }: { params: Params }) {
           ))}
         </ul>
       </aside>
+
+      {calc && (
+        <Link
+          href={`/${lang}/calculators/${calc.slug}`}
+          className="mt-6 flex min-h-11 items-center gap-2 rounded-lg border border-primary/40 px-5 py-3 font-medium text-primary hover:bg-paper"
+        >
+          <Calculator className="size-5 shrink-0" aria-hidden />
+          {t.calcCta}: {calc[lang].title} →
+        </Link>
+      )}
 
       {text.sections.map((s) => (
         <Section key={s.heading} s={s} />

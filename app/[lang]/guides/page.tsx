@@ -31,6 +31,14 @@ async function GuidesBody({ params }: { params: Params }) {
     <div className="mx-auto max-w-2xl py-10">
       <h1 className="font-serif text-4xl font-semibold tracking-tight text-balance">{t.guidesTitle}</h1>
       <p className="mt-4 text-lg leading-relaxed text-pretty text-muted-foreground">{t.guidesIntro}</p>
+      <p className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+        <Link href={`/${lang}/which-benefits`} className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 hover:underline sm:min-h-0">
+          {t.checkerTitle} →
+        </Link>
+        <Link href={`/${lang}/calculators`} className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 hover:underline sm:min-h-0">
+          {t.calculatorsTitle} →
+        </Link>
+      </p>
 
       {groups.map(({ c, guides }) => (
         <section key={c} className="mt-10" aria-labelledby={`g-${c}`}>

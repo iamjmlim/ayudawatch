@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { StoryList, StoryListSkeleton } from '@/components/site/story-list';
 import { OfficialLinks } from '@/components/site/official-links';
 import { GuideLinks } from '@/components/site/guide-links';
-import { CATEGORY_SLUGS, getDictionary, isCategory, isLocale } from '@/lib/i18n';
+import { CATEGORY_INTROS, CATEGORY_SLUGS, getDictionary, isCategory, isLocale } from '@/lib/i18n';
 import { getLatestStories } from '@/lib/news';
 
 type Params = Promise<{ lang: string; category: string }>;
@@ -34,6 +34,9 @@ async function CategoryStories({ params }: { params: Params }) {
       <h1 className="border-b border-border pt-7 pb-4 font-serif text-2xl font-semibold tracking-tight sm:text-3xl">
         {t.categories[category]}
       </h1>
+      {CATEGORY_INTROS[lang][category] && (
+        <p className="mt-4 max-w-2xl leading-relaxed text-pretty text-muted-foreground">{CATEGORY_INTROS[lang][category]}</p>
+      )}
       <OfficialLinks category={category} locale={lang} />
       <GuideLinks category={category} locale={lang} />
       <StoryList stories={stories} locale={lang} lead={false} category={category} />
