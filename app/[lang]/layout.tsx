@@ -1,3 +1,4 @@
+import { THEME_SCRIPT } from '@/lib/theme';
 import type { Metadata } from 'next';
 import { hreflang } from '@/lib/seo';
 import { notFound } from 'next/navigation';
@@ -50,7 +51,14 @@ export default async function SiteLayout({
   if (!isLocale(lang)) notFound();
 
   return (
-    <html lang={lang === 'fil' ? 'fil' : 'en'} className={`${sans.variable} ${mono.variable} ${serif.variable} antialiased`}>
+    <html
+      lang={lang === 'fil' ? 'fil' : 'en'}
+      className={`${sans.variable} ${mono.variable} ${serif.variable} antialiased`}
+      suppressHydrationWarning // data-theme is set by THEME_SCRIPT before React loads
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="flex min-h-dvh flex-col">
         <a
           href="#main"

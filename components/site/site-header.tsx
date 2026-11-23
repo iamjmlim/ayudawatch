@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { CATEGORY_SLUGS, getDictionary, type Locale } from '@/lib/i18n';
 import { getActiveCategories } from '@/lib/news';
 import { LangSwitch } from './lang-switch';
+import { ThemeToggle } from './theme-toggle';
 import { SectionNav } from './section-nav';
 
 export async function SiteHeader({ locale }: { locale: Locale }) {
@@ -24,7 +25,10 @@ export async function SiteHeader({ locale }: { locale: Locale }) {
           </span>
           <span className="mt-1 text-[0.8125rem] text-muted-foreground sm:mt-0 sm:text-sm">{t.tagline}</span>
         </Link>
-        <LangSwitch label={t.switchLanguage} ariaLabel={t.switchLanguageLabel} />
+        <div className="flex shrink-0 items-center gap-2">
+          <ThemeToggle label={t.themeToggle} />
+          <LangSwitch label={t.switchLanguage} ariaLabel={t.switchLanguageLabel} />
+        </div>
       </div>
       <SectionNav items={items} label={t.navLabel} />
     </header>
