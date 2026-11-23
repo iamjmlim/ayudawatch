@@ -1,7 +1,7 @@
 // Versioned prompt. Bump PROMPT_VERSION whenever the wording changes,
 // so every saved summary records which prompt produced it.
 
-export const PROMPT_VERSION = 'ayuda-v2';
+export const PROMPT_VERSION = 'ayuda-v3';
 
 export const CATEGORIES = [
   'ayuda', // DSWD, 4Ps, AICS, subsidies and cash aid
@@ -24,6 +24,12 @@ export type Sensitivity = (typeof SENSITIVITIES)[number];
 export const SUMMARY_SYSTEM_PROMPT = `You write short, neutral summaries for AyudaWatch, an independent (non-government) site that helps Filipinos at home and abroad keep up with government benefits, aid programs, IDs and documents, school and work announcements, and holidays.
 
 You receive one news story as reported by one or more Philippine outlets. Write an ORIGINAL summary in your own words, in English and in Filipino.
+
+FIRST, DECIDE IF IT BELONGS ON AYUDAWATCH:
+- who_is_affected: a short phrase naming who this news changes things for, e.g. "SSS pensioners", "OFWs in Taiwan", "students in Surigao del Sur", "Chinese tourists", "no one in particular".
+- for_filipinos: true ONLY if the news changes what Filipinos in the Philippines or OFWs can GET (a benefit, aid, service, ID or document), must DO (a deadline, requirement, schedule, registration), or must PAY (a government-set price, fee, rate or tax), or announces a holiday, a class suspension or a work suspension, or reports government aid or services being delivered to Filipinos.
+  It is false for: visas or entry rules for foreigners; budget debates, politics and statements with no change for recipients; politicians personally handing out help; suspensions, charges or cases against officials or private people; crime and traffic violations; strikes and protests; company, product, lifestyle, shopping or holiday-season features; market or economic statistics.
+- If for_filipinos is false, set "skip": true.
 
 FACT RULES (most important):
 - Use ONLY facts stated in the provided sources. Never add facts, numbers, names, dates, or places from your own knowledge.
@@ -52,7 +58,7 @@ SKIP:
 - Set "skip": true (and leave the text fields as empty strings) if the story is NOT mainly about a government benefit, aid program, ID or document, tax, school or work announcement, holiday, or government-set price FOR FILIPINOS (skip stories that mainly concern foreign nationals, e.g. visas for foreigners); or if the sources are opinion columns, sponsored/advertising content, horoscopes, quizzes, live blogs with no clear facts, or do not contain enough facts for an accurate summary. Put the reason in "skip_reason".
 
 Respond with ONLY a JSON object with exactly these keys:
-{"skip": boolean, "skip_reason": string, "category": string, "sensitivity": string,
+{"who_is_affected": string, "for_filipinos": boolean, "skip": boolean, "skip_reason": string, "category": string, "sensitivity": string,
  "headline_en": string, "summary_en": string, "why_it_matters_en": string,
  "headline_fil": string, "summary_fil": string, "why_it_matters_fil": string}`;
 

@@ -39,11 +39,15 @@ export function parseDraft(text: string): { draft?: SummaryDraft; problems: stri
 
   const problems: string[] = [];
   const str = (k: string) => (typeof raw[k] === 'string' ? (raw[k] as string).trim() : '');
-  const skip = raw.skip === true;
+  // Not explicitly for Filipinos (false, missing or not a boolean) means skip,
+  // even if the model forgot to set "skip" itself.
+  const forFilipinos = raw.for_filipinos === true;
+  const skip = raw.skip === true || !forFilipinos;
 
   const draft: SummaryDraft = {
     skip,
-    skip_reason: str('skip_reason'),
+    skip_reason:
+      str('skip_reason') || (forFilipinos ? '' : `not for Filipinos (affects: ${str('who_is_affected') || 'unclear'})`),
     category: str('category').toLowerCase() as Category,
     sensitivity: str('sensitivity').toLowerCase() as Sensitivity,
     headline_en: str('headline_en'),

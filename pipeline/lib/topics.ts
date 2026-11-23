@@ -10,7 +10,7 @@ const TOPICS: RegExp[] = [
   // Aid / ayuda
   /\bDSWD\b|ayuda|\b4Ps\b|pantawid|\bAICS\b|\bTUPAD\b|\bAKAP\b|cash aid|financial assistance|subsidy|subsidi|relief (packs|goods)|food packs|social pension|kadiwa|\bSAP\b|fuel subsidy|rice (subsidy|aid)/i,
   // School
-  /\bDepEd\b|\bCHED\b|\bTESDA\b|scholarship|iskolar|walang pasok|class(es)? (suspension|suspended)|suspend(ed|s)? classes|enrol?lment|school (calendar|opening|year)|learners?\b|students? aid/i,
+  /\bDepEd\b|\bCHED\b|\bTESDA\b|scholarship|iskolar|walang pasok|class(es)? (suspension|suspended)|suspend(ed|s)? classes|enrol?lment|school (calendar|opening|year)|students? aid/i,
   // Work
   /\bDOLE\b|minimum wage|wage hike|13th[- ]month|holiday pay|overtime pay|labor advisory|job fair|employment|\bTUPAD\b/i,
   // OFWs
@@ -20,13 +20,22 @@ const TOPICS: RegExp[] = [
   // Taxes
   /\bBIR\b|income tax|tax (filing|deadline|refund|exempt)|\bTIN\b|\bVAT\b/i,
   // Holidays and work suspensions
-  /holiday|non-working|special working day|work suspension|suspension of work/i,
+  /(regular|special|national|local) (non-working )?holidays?|holidays? (declared|on|pay)|declares? .{0,30}holidays?|non-working|special working day|work suspension|suspension of work/i,
   // Prices that government sets or controls
   /price (freeze|ceiling)|suggested retail price|\bSRP\b|power rate|meralco rate|fare (hike|increase|matrix)|toll (fee|rate)/i,
 ];
 
 // Notices that mention a topic word but aren't news readers can use.
-const NOISE = /procurement|invitation to bid|bid(ding)? (documents|notice)|supply and delivery|request for quotation|notice of award|job vacanc(y|ies) at|hiring of consultant/i;
+const NOISE = new RegExp(
+  [
+    'procurement|invitation to bid|bid(ding)? (documents|notice)|supply and delivery|request for quotation|notice of award|job vacanc(y|ies) at|hiring of consultant',
+    // lifestyle and shopping features that say "holiday"
+    'holiday (gifts?|season|rush|shopping|collection|heritage|sale|getaway|look)|gift guide|christmas (rush|shopping|bazaar)',
+    // officials' suspensions and cases are not benefit news
+    '(mayor|governor|councilor|officials?) (is |was )?suspended|suspension of (mayor|governor|officials?)',
+  ].join('|'),
+  'i',
+);
 
 export function matchesTopic(text: string): boolean {
   if (NOISE.test(text)) return false;
