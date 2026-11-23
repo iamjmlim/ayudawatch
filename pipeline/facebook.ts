@@ -18,6 +18,7 @@
 import { check, getDb } from './lib/db.ts';
 import { firstSentences } from '../lib/excerpt.ts';
 import { GUIDES } from '../lib/guides/index.ts';
+import { CALCULATORS } from '../lib/calculators.ts';
 
 const DRY_RUN = process.argv.includes('--dry-run');
 const PAGE_ID = process.env.FB_PAGE_ID;
@@ -108,12 +109,46 @@ async function removeUnpublished(stats: { removed: number }) {
   }
 }
 
-// ---------- weekly guide post ----------
-// Once a week (default Monday from 9 AM Philippine time) one evergreen guide is
-// posted instead of a news story, rotating through GUIDES in order. The last
-// guide posted is remembered in settings.fb_guide_state.
+// ---------- weekly evergreen post ----------
+// Once a week (default Monday from 9 AM Philippine time) one guide or calculator is
+// posted instead of a news story. The rotation alternates guide, calculator, guide…
+// and the last item posted is remembered in settings.fb_guide_state.
 
-type GuideState = { last_slug?: string; last_posted_at?: string; last_post_id?: string };
+type GuideState = { last_key?: string; last_slug?: string; last_posted_at?: string; last_post_id?: string };
+
+type Evergreen = { key: string; message: string; link: string };
+
+function guideItem(guide: (typeof GUIDES)[number]): Evergreen {
+  const { message, link } = guideText(guide);
+  return { key: `guide:${guide.slug}`, message, link };
+}
+
+function calculatorItem(calc: (typeof CALCULATORS)[number]): Evergreen {
+  const t = calc[LANG];
+  const link = `${SITE_URL}/${LANG}/calculators/${calc.slug}`;
+  const lines =
+    LANG === 'fil'
+      ? [`CALCULATOR: ${t.title}`, t.description, `Subukan nang libre: ${link}`, 'Tantiya lamang ito. Hindi ito website ng gobyerno; laging kumpirmahin sa opisyal na ahensya.']
+      : [`CALCULATOR: ${t.title}`, t.description, `Try it free: ${link}`, 'Estimates only. Not a government website; always confirm with the official agency.'];
+  return { key: `calc:${calc.slug}`, message: lines.join('\n\n'), link };
+}
+
+/** Guides and calculators interleaved: G1, C1, G2, C2, … then the remaining guides. */
+function rotation(): Evergreen[] {
+  const items: Evergreen[] = [];
+  for (let i = 0; i < Math.max(GUIDES.length, CALCULATORS.length); i++) {
+    if (GUIDES[i]) items.push(guideItem(GUIDES[i]));
+    if (CALCULATORS[i]) items.push(calculatorItem(CALCULATORS[i]));
+  }
+  return items;
+}
+
+function nextItem(state: GuideState): Evergreen {
+  const items = rotation();
+  const lastKey = state.last_key ?? (state.last_slug ? `guide:${state.last_slug}` : undefined);
+  const i = items.findIndex((it) => it.key === lastKey);
+  return items[(i + 1) % items.length]; // i = -1 (none yet) starts at the first item
+}
 
 async function getGuideState(): Promise<GuideState> {
   const row = check(
@@ -121,11 +156,6 @@ async function getGuideState(): Promise<GuideState> {
     'read guide state',
   ) as { value: GuideState } | null;
   return row?.value ?? {};
-}
-
-function nextGuide(state: GuideState) {
-  const i = GUIDES.findIndex((g) => g.slug === state.last_slug);
-  return GUIDES[(i + 1) % GUIDES.length]; // i = -1 (none yet) starts at the first guide
 }
 
 function guideIsDue(state: GuideState): boolean {
@@ -183,18 +213,17 @@ async function main() {
   if (postedToday >= DAILY_LIMIT) stats.reason = `daily limit reached (${postedToday}/${DAILY_LIMIT})`;
   else if (minutesSinceLast < MIN_GAP_MINUTES) stats.reason = `last post ${Math.round(minutesSinceLast)} min ago (gap ${MIN_GAP_MINUTES})`;
 
-  if (!stats.reason && GUIDES.length && guideIsDue(guideState)) {
-    const guide = nextGuide(guideState);
-    const post = guideText(guide);
-    console.log(`✓ GUIDE POST (${guide.slug}):\n${post.message.replace(/^/gm, '   ')}\n`);
+  if (!stats.reason && GUIDES.length + CALCULATORS.length > 0 && guideIsDue(guideState)) {
+    const post = nextItem(guideState);
+    console.log(`✓ WEEKLY POST (${post.key}):\n${post.message.replace(/^/gm, '   ')}\n`);
     if (!DRY_RUN) {
       const res = await graph('POST', `${PAGE_ID}/feed`, { message: post.message, link: post.link });
-      const value: GuideState = { last_slug: guide.slug, last_posted_at: new Date().toISOString(), last_post_id: res.id };
+      const value: GuideState = { last_key: post.key, last_posted_at: new Date().toISOString(), last_post_id: res.id };
       check(await db.from('settings').upsert({ key: 'fb_guide_state', value }), 'save guide state');
       console.log(`   posted: ${res.id}`);
     }
     stats.posted++;
-    stats.reason = 'weekly guide posted';
+    stats.reason = 'weekly guide or calculator posted';
   }
 
   if (!stats.reason) {
