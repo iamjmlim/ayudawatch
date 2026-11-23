@@ -133,7 +133,12 @@ async function main() {
 
   const res = await fetch('https://api.buttondown.com/v1/emails', {
     method: 'POST',
-    headers: { Authorization: `Token ${API_KEY}`, 'Content-Type': 'application/json' },
+    headers: {
+      Authorization: `Token ${API_KEY}`,
+      'Content-Type': 'application/json',
+      // Buttondown's one-time confirmation that this API key may send emails (drafts don't need it).
+      ...(DRAFT ? {} : { 'X-Buttondown-Live-Dangerously': 'true' }),
+    },
     body: JSON.stringify({ subject, body, status: DRAFT ? 'draft' : SEND_STATUS }),
     signal: AbortSignal.timeout(30_000),
   });
