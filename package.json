@@ -17,7 +17,8 @@
     "digest": "node --env-file-if-exists=.env.local pipeline/digest.ts",
     "digest:dry": "node --env-file-if-exists=.env.local pipeline/digest.ts --dry-run",
     "facebook:dry": "node --env-file-if-exists=.env.local pipeline/facebook.ts --dry-run",
-    "summarize:dry": "node --env-file-if-exists=.env.local pipeline/summarize.ts --dry-run"
+    "summarize:dry": "node --env-file-if-exists=.env.local pipeline/summarize.ts --dry-run",
+    "check-guides": "node --env-file-if-exists=.env.local pipeline/check-guides.ts"
   },
   "engines": {
     "node": ">=24"

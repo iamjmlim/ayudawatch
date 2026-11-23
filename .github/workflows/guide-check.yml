@@ -1,0 +1,35 @@
+name: Guide freshness check
+
+# Re-reads the official pages behind every guide and opens a GitHub issue
+# (label "guide-check") when one changed or disappeared. Changes nothing on the site.
+on:
+  schedule:
+    - cron: '0 1 1 * *' # 1st of every month, 01:00 UTC = 9:00 AM Philippine time
+  workflow_dispatch: {} # "Run workflow" button for a check any time
+
+permissions:
+  contents: read
+  issues: write # to open or comment on guide-check issues
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: --no-deprecation
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci --ignore-scripts
+
+      - name: Check guide sources
+        run: npm run check-guides
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
