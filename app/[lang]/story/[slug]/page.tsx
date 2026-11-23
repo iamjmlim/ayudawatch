@@ -52,7 +52,7 @@ async function MoreStories({ lang, slug, category }: { lang: 'en' | 'fil'; slug:
   return (
     <section aria-labelledby="more-heading" className="mt-14 border-t-2 border-foreground/80 pt-5">
       <h2 id="more-heading" className="font-serif text-xl font-semibold">
-        <Link href={`/${lang}/${category}`} className="underline-offset-4 hover:underline">
+        <Link href={`/${lang}/${category}`} className="underline decoration-border underline-offset-4 hover:decoration-foreground">
           {t.moreIn(t.categories[cat])}
         </Link>
       </h2>
@@ -95,7 +95,7 @@ async function StoryBody({ params }: { params: Params }) {
             <OutletCount count={story.sources.length} locale={lang} size="md" />
           </a>
           {story.category && (
-            <Link href={`/${lang}/${story.category}`} className="font-medium text-primary underline-offset-4 hover:underline">
+            <Link href={`/${lang}/${story.category}`} className="font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary">
               {t.categories[story.category]}
             </Link>
           )}

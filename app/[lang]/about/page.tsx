@@ -65,7 +65,7 @@ async function Sources({ title }: { title: string }) {
       <ul className="mt-3 grid gap-2 sm:grid-cols-2">
         {sources.map((s) => (
           <li key={s.homepage}>
-            <a href={s.homepage} target="_blank" rel="noopener" className="text-primary hover:underline">
+            <a href={s.homepage} target="_blank" rel="noopener" className="text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary">
               {s.name}
             </a>
           </li>

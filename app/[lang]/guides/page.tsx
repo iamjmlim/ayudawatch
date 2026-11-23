@@ -5,6 +5,12 @@ import { notFound } from 'next/navigation';
 import { hreflang } from '@/lib/seo';
 import { CATEGORY_SLUGS, getDictionary, isLocale } from '@/lib/i18n';
 import { GUIDES } from '@/lib/guides';
+import { Calculator, ListChecks } from 'lucide-react';
+import { LinkCard } from '@/components/site/link-card';
+
+// Secondary actions styled as outlined pill buttons so they read as clickable on touch screens.
+const pill =
+  'inline-flex min-h-11 items-center gap-2 rounded-full border border-primary/50 px-4 text-sm font-medium text-primary transition-colors hover:border-primary hover:bg-paper focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none';
 
 type Params = Promise<{ lang: string }>;
 
@@ -31,12 +37,14 @@ async function GuidesBody({ params }: { params: Params }) {
     <div className="mx-auto max-w-2xl py-10">
       <h1 className="font-serif text-4xl font-semibold tracking-tight text-balance">{t.guidesTitle}</h1>
       <p className="mt-4 text-lg leading-relaxed text-pretty text-muted-foreground">{t.guidesIntro}</p>
-      <p className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
-        <Link href={`/${lang}/which-benefits`} className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 hover:underline sm:min-h-0">
-          {t.checkerTitle} →
+      <p className="mt-5 flex flex-wrap gap-3">
+        <Link href={`/${lang}/which-benefits`} className={pill}>
+          <ListChecks className="size-4" aria-hidden />
+          {t.checkerTitle}
         </Link>
-        <Link href={`/${lang}/calculators`} className="inline-flex min-h-11 items-center font-medium text-primary underline-offset-4 hover:underline sm:min-h-0">
-          {t.calculatorsTitle} →
+        <Link href={`/${lang}/calculators`} className={pill}>
+          <Calculator className="size-4" aria-hidden />
+          {t.calculatorsTitle}
         </Link>
       </p>
 
@@ -45,13 +53,10 @@ async function GuidesBody({ params }: { params: Params }) {
           <h2 id={`g-${c}`} className="border-b border-border pb-2 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
             {t.categories[c]}
           </h2>
-          <ul className="divide-y divide-border">
+          <ul className="mt-4 grid gap-3">
             {guides.map((g) => (
-              <li key={g.slug} className="py-4">
-                <Link href={`/${lang}/guides/${g.slug}`} className="group block">
-                  <span className="font-serif text-xl font-semibold group-hover:underline">{g[lang].title}</span>
-                  <span className="mt-1 block leading-relaxed text-muted-foreground">{g[lang].description}</span>
-                </Link>
+              <li key={g.slug}>
+                <LinkCard href={`/${lang}/guides/${g.slug}`} title={g[lang].title} description={g[lang].description} />
               </li>
             ))}
           </ul>

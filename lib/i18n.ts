@@ -88,7 +88,7 @@ const en = {
   calculators: 'Calculators',
   calculatorsTitle: 'Benefit calculators',
   calculatorsIntro:
-    'Estimate your SSS benefits with the formulas on the official SSS pages. Results are estimates: the amount SSS approves is final.',
+    'Estimate your SSS, PhilHealth and Pag-IBIG contributions and benefits with the formulas on the official agency pages. Results are estimates: the amounts the agencies approve are final.',
   calcNotice:
     'This is an estimate, not an official SSS computation. It uses only the formula on the official page linked below and the numbers you enter. AyudaWatch does not save what you type.',
   calcGuide: 'Read the full guide',
@@ -185,7 +185,7 @@ const fil: Dictionary = {
   calculators: 'Mga calculator',
   calculatorsTitle: 'Mga benefit calculator',
   calculatorsIntro:
-    'Tantiyahin ang mga benepisyo mo sa SSS gamit ang mga formula sa opisyal na pahina ng SSS. Tantiya lamang ang resulta: ang halagang aaprubahan ng SSS ang pinal.',
+    'Tantiyahin ang mga hulog at benepisyo mo sa SSS, PhilHealth at Pag-IBIG gamit ang mga formula sa opisyal na pahina ng mga ahensya. Tantiya lamang ang resulta: ang halagang aaprubahan ng ahensya ang pinal.',
   calcNotice:
     'Tantiya lamang ito, hindi opisyal na kuwenta ng SSS. Ang formula lang sa opisyal na pahinang naka-link sa ibaba at ang mga numerong inilagay mo ang ginagamit nito. Hindi sine-save ng AyudaWatch ang tina-type mo.',
   calcGuide: 'Basahin ang buong gabay',

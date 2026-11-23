@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { BookOpen, Calculator } from 'lucide-react';
+import { LinkCard } from './link-card';
 
 export type CheckerItem = { key: string; label: string; links: { href: string; title: string; kind: 'guide' | 'calculator' }[] };
 
@@ -39,13 +39,14 @@ export function BenefitChecker({ items, resultsTitle, noneText }: { items: Check
         {unique.length === 0 ? (
           <p className="mt-2 text-muted-foreground">{noneText}</p>
         ) : (
-          <ul className="mt-3 divide-y divide-border border-y border-border">
+          <ul className="mt-4 grid gap-3">
             {unique.map((l) => (
-              <li key={l.href} className="py-3">
-                <Link href={l.href} className="inline-flex items-center gap-2 font-medium text-primary underline-offset-4 hover:underline">
-                  {l.kind === 'calculator' ? <Calculator className="size-4 shrink-0" aria-hidden /> : <BookOpen className="size-4 shrink-0" aria-hidden />}
-                  {l.title}
-                </Link>
+              <li key={l.href}>
+                <LinkCard
+                  href={l.href}
+                  title={l.title}
+                  icon={l.kind === 'calculator' ? <Calculator className="size-6" aria-hidden /> : <BookOpen className="size-6" aria-hidden />}
+                />
               </li>
             ))}
           </ul>

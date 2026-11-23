@@ -99,11 +99,11 @@ async function GuideBody({ params }: { params: Params }) {
     <article className="mx-auto max-w-2xl py-10">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
-        <Link href={`/${lang}/guides`} className="hover:underline">
+        <Link href={`/${lang}/guides`} className="underline decoration-border underline-offset-4 hover:text-foreground hover:decoration-foreground">
           {t.guides}
         </Link>
         <span aria-hidden> / </span>
-        <Link href={`/${lang}/${guide.category}`} className="hover:underline">
+        <Link href={`/${lang}/${guide.category}`} className="underline decoration-border underline-offset-4 hover:text-foreground hover:decoration-foreground">
           {t.categories[guide.category]}
         </Link>
       </nav>
@@ -120,7 +120,7 @@ async function GuideBody({ params }: { params: Params }) {
           {guide.sources.map((s) => (
             <li key={s.url}>
               <span className="text-muted-foreground">{t.guideSource}: </span>
-              <a href={s.url} target="_blank" rel="noopener" className="inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline">
+              <a href={s.url} target="_blank" rel="noopener" className="inline-flex items-center gap-1 font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary">
                 {s.name}
                 <ExternalLink className="size-3.5" aria-hidden />
                 <span className="sr-only"> {t.opensNewTab}</span>

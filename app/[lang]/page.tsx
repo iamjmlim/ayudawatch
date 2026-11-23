@@ -30,7 +30,7 @@ async function HomeStories({ params }: { params: Promise<{ lang: string }> }) {
             {t.lastUpdated} <time dateTime={lastChange}>{formatTime(lastChange, lang)}</time>
             <span className="hidden sm:inline">
               <span aria-hidden> · </span>
-              <Link href={`/${lang}/about`} className="font-medium text-primary hover:underline">
+              <Link href={`/${lang}/about`} className="font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary">
                 {t.about}
               </Link>
             </span>

@@ -20,7 +20,7 @@ export function OfficialLinks({ category, locale }: { category: CategorySlug; lo
               href={l.url}
               target="_blank"
               rel="noopener"
-              className="inline-flex min-h-11 items-center gap-1 font-medium text-primary underline-offset-4 hover:underline sm:min-h-0"
+              className="inline-flex min-h-11 items-center gap-1 font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary sm:min-h-0"
             >
               {l.name}
               <ExternalLink className="size-3.5" aria-hidden />

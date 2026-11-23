@@ -10,10 +10,10 @@ export default function NotFound() {
         It may have been removed or the link is wrong. · Maaaring inalis na ito o mali ang link.
       </p>
       <p className="mt-8 flex justify-center gap-4 text-sm">
-        <Link href="/en" className="font-medium text-primary hover:underline">
+        <Link href="/en" className="font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary">
           Top stories
         </Link>
-        <Link href="/fil" className="font-medium text-primary hover:underline">
+        <Link href="/fil" className="font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary">
           Nangungunang balita
         </Link>
       </p>

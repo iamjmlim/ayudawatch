@@ -10,7 +10,7 @@ export function GuideLinks({ category, locale }: { category: CategorySlug; local
   const tables = TABLES.filter((t) => t.category === category);
   if (!guides.length && !tables.length) return null;
   const t = getDictionary(locale);
-  const linkClass = 'inline-flex min-h-11 items-center gap-2 font-medium text-primary underline-offset-4 hover:underline sm:min-h-0';
+  const linkClass = 'inline-flex min-h-11 items-center gap-2 font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary sm:min-h-0';
   return (
     <aside aria-labelledby="guides-title" className="mt-4 rounded-lg border border-border px-5 py-4">
       <h2 id="guides-title" className="flex items-center gap-2 text-sm font-semibold">

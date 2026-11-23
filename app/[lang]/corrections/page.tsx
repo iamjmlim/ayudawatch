@@ -31,7 +31,7 @@ async function CorrectionsBody({ params }: { params: Params }) {
       {contact && (
         <p className="mt-2 text-muted-foreground">
           {t.reportError}{' '}
-          <a href={`mailto:${contact}`} className="font-medium text-primary hover:underline">
+          <a href={`mailto:${contact}`} className="font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary">
             {contact}
           </a>
         </p>
