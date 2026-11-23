@@ -7,7 +7,7 @@ export const peso = (n: number) =>
 
 export function Field({ id, label, hint, children }: { id: string; label: string; hint?: string; children: ReactNode }) {
   return (
-    <div className="grid gap-1.5">
+    <div className="grid min-w-0 gap-1.5">
       <label htmlFor={id} className="text-sm font-semibold">
         {label}
       </label>
@@ -18,7 +18,7 @@ export function Field({ id, label, hint, children }: { id: string; label: string
 }
 
 export const inputClass =
-  'h-11 w-full rounded-lg border border-input bg-transparent px-3 text-base tabular-nums outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30';
+  'h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-3 text-base tabular-nums outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30';
 
 export function Result({ label, value, sub }: { label: string; value: string; sub?: ReactNode }) {
   return (

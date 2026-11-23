@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { hreflang } from '@/lib/seo';
 import { getDictionary, isLocale } from '@/lib/i18n';
 import { CALCULATORS } from '@/lib/calculators';
+import { TABLES } from '@/lib/tables';
 
 type Params = Promise<{ lang: string }>;
 
@@ -33,6 +34,18 @@ async function Body({ params }: { params: Params }) {
             <Link href={`/${lang}/calculators/${c.slug}`} className="group block">
               <span className="font-serif text-xl font-semibold group-hover:underline">{c[lang].title}</span>
               <span className="mt-1 block leading-relaxed text-muted-foreground">{c[lang].description}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <h2 className="mt-12 font-serif text-2xl font-semibold">{lang === 'fil' ? 'Mga contribution table' : 'Contribution tables'}</h2>
+      <ul className="mt-3 divide-y divide-border border-y border-border">
+        {TABLES.map((tb) => (
+          <li key={tb.slug} className="py-4">
+            <Link href={`/${lang}/tables/${tb.slug}`} className="group block">
+              <span className="font-serif text-xl font-semibold group-hover:underline">{tb[lang].title}</span>
+              <span className="mt-1 block leading-relaxed text-muted-foreground">{tb[lang].description}</span>
             </Link>
           </li>
         ))}

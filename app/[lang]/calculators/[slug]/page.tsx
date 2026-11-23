@@ -7,6 +7,7 @@ import { hreflang } from '@/lib/seo';
 import { getDictionary, isLocale } from '@/lib/i18n';
 import { CALCULATORS, getCalculator } from '@/lib/calculators';
 import { CalculatorView } from '@/components/calculators/calculator-view';
+import { TABLES } from '@/lib/tables';
 
 type Params = Promise<{ lang: string; slug: string }>;
 
@@ -70,11 +71,21 @@ async function Body({ params }: { params: Params }) {
               </a>
             </li>
           ))}
-          <li>
-            <Link href={`/${lang}/guides/${calc.guideSlug}`} className="font-medium text-primary underline-offset-4 hover:underline">
-              {t.calcGuide} →
-            </Link>
-          </li>
+          {calc.guideSlug && (
+            <li>
+              <Link href={`/${lang}/guides/${calc.guideSlug}`} className="font-medium text-primary underline-offset-4 hover:underline">
+                {t.calcGuide} →
+              </Link>
+            </li>
+          )}
+          {calc.slug === 'contributions' &&
+            TABLES.map((tb) => (
+              <li key={tb.slug}>
+                <Link href={`/${lang}/tables/${tb.slug}`} className="font-medium text-primary underline-offset-4 hover:underline">
+                  {tb[lang].title} →
+                </Link>
+              </li>
+            ))}
         </ul>
       </aside>
     </article>

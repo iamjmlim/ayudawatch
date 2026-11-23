@@ -6,16 +6,36 @@ import type { CategorySlug } from './i18n.ts';
 export type CalculatorText = { title: string; description: string; intro: string };
 
 export type Calculator = {
-  slug: 'sss-pension' | 'sss-maternity' | 'sss-sickness' | 'pagibig-mp2';
+  slug: 'contributions' | 'sss-pension' | 'sss-maternity' | 'sss-sickness' | 'pagibig-mp2';
   category: CategorySlug;
   checkedOn: string;
-  guideSlug: string; // the matching guide
+  guideSlug?: string; // the matching guide, if there is one
   sources: { name: string; url: string }[];
   en: CalculatorText;
   fil: CalculatorText;
 };
 
 export const CALCULATORS: Calculator[] = [
+  {
+    slug: 'contributions',
+    category: 'sss-gsis',
+    checkedOn: '2026-11-24',
+    sources: [
+      { name: 'SSS: Contribution Table', url: 'https://www.sss.gov.ph/sss-contribution-table/' },
+      { name: 'PhilHealth: Premium Contribution Table', url: 'https://www.philhealth.gov.ph/partners/employers/ContributionTable_v2.pdf' },
+      { name: 'Pag-IBIG Fund: Regular Savings', url: 'https://www.pagibigfund.gov.ph/Membership_RegularSavings.html' },
+    ],
+    en: {
+      title: 'SSS, PhilHealth and Pag-IBIG contribution calculator 2026',
+      description: 'Enter your monthly salary to see your SSS, PhilHealth and Pag-IBIG contributions and your employer’s share, using the official tables.',
+      intro: 'Enter your monthly salary and membership type. The calculator uses the official SSS schedule (effective January 2025), PhilHealth’s 5% premium and Pag-IBIG’s ₱10,000 maximum fund salary.',
+    },
+    fil: {
+      title: 'SSS, PhilHealth at Pag-IBIG contribution calculator 2026',
+      description: 'Ilagay ang buwanang sahod mo para makita ang hulog mo sa SSS, PhilHealth at Pag-IBIG at ang hati ng employer, gamit ang mga opisyal na table.',
+      intro: 'Ilagay ang buwanang sahod at uri ng membership mo. Ginagamit ng calculator ang opisyal na SSS schedule (epektibo Enero 2025), ang 5% premium ng PhilHealth at ang ₱10,000 maximum fund salary ng Pag-IBIG.',
+    },
+  },
   {
     slug: 'sss-pension',
     category: 'sss-gsis',
