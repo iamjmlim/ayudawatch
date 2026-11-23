@@ -9,6 +9,7 @@ export type GuideSection = {
   text?: string; // a short paragraph
   points?: string[]; // bullet list
   steps?: string[]; // numbered list
+  note?: string; // shown after the lists
 };
 
 export type GuideText = {

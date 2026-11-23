@@ -62,6 +62,7 @@ function Section({ s }: { s: GuideSection }) {
           ))}
         </ol>
       )}
+      {s.note && <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{s.note}</p>}
     </section>
   );
 }

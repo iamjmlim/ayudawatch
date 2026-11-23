@@ -1,11 +1,14 @@
 import type { CategorySlug } from '../i18n';
+import { philhealthSeniorCitizens } from './philhealth-senior-citizens';
+import { sssMaternityBenefit } from './sss-maternity-benefit';
 import { sssSalaryLoan } from './sss-salary-loan';
+import { sssUnemploymentBenefit } from './sss-unemployment-benefit';
 import type { Guide } from './types';
 
 export type { Guide, GuideSection, GuideText } from './types';
 
 // Add new guides here. Order = order on the Guides page.
-export const GUIDES: Guide[] = [sssSalaryLoan];
+export const GUIDES: Guide[] = [sssSalaryLoan, sssMaternityBenefit, sssUnemploymentBenefit, philhealthSeniorCitizens];
 
 export function getGuide(slug: string): Guide | undefined {
   return GUIDES.find((g) => g.slug === slug);
