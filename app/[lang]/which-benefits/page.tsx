@@ -17,6 +17,7 @@ const SITUATIONS: { key: string; en: string; fil: string; guides: string[]; calc
   { key: 'jobloss', en: 'I lost my job through no choice of my own', fil: 'Nawalan ako ng trabaho nang hindi ko kagustuhan', guides: ['sss-unemployment-benefit'], calculators: [] },
   { key: 'retire', en: 'I am 60 or older and want to retire', fil: '60 taong gulang na ako o higit pa at gusto kong magretiro', guides: ['sss-retirement-benefit'], calculators: ['sss-pension'] },
   { key: 'senior', en: 'I am 60 or older and not yet covered by PhilHealth', fil: '60 taong gulang na ako o higit pa at hindi pa sakop ng PhilHealth', guides: ['philhealth-senior-citizens'], calculators: [] },
+  { key: 'save', en: 'I want to save more and earn tax-free dividends with Pag-IBIG', fil: 'Gusto kong mag-ipon pa at kumita ng dibidendong walang buwis sa Pag-IBIG', guides: ['pagibig-mp2'], calculators: ['pagibig-mp2'] },
   { key: 'funeral', en: 'An SSS member in my family died and I paid for the funeral', fil: 'Namatay ang miyembro ng SSS sa pamilya ko at ako ang nagbayad ng libing', guides: ['sss-funeral-benefit'], calculators: [] },
 ];
 

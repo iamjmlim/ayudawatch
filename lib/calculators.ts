@@ -6,7 +6,7 @@ import type { CategorySlug } from './i18n.ts';
 export type CalculatorText = { title: string; description: string; intro: string };
 
 export type Calculator = {
-  slug: 'sss-pension' | 'sss-maternity' | 'sss-sickness';
+  slug: 'sss-pension' | 'sss-maternity' | 'sss-sickness' | 'pagibig-mp2';
   category: CategorySlug;
   checkedOn: string;
   guideSlug: string; // the matching guide
@@ -73,6 +73,25 @@ export const CALCULATORS: Calculator[] = [
         'Piliin ang buwan ng pagkakasakit mo, tingnan kung aling 12 buwan ang tinitingnan ng SSS, at ilagay ang 6 na pinakamataas na monthly salary credit mo sa mga buwang iyon at ang bilang ng araw.',
     },
   },
+  {
+    slug: 'pagibig-mp2',
+    category: 'pabahay',
+    checkedOn: '2026-11-24',
+    guideSlug: 'pagibig-mp2',
+    sources: [{ name: 'Pag-IBIG Fund: MP2 Savings', url: 'https://www.pagibigfund.gov.ph/member_savings_mp2.html' }],
+    en: {
+      title: 'Pag-IBIG MP2 calculator',
+      description: 'Estimate your Pag-IBIG MP2 savings and dividends after 5 years, using the official MP2 return rates.',
+      intro:
+        'Enter a one-time amount, a monthly amount, or both, and pick a dividend rate. Pag-IBIG has no official MP2 calculator, so this is an estimate based on the official return rates.',
+    },
+    fil: {
+      title: 'Pag-IBIG MP2 calculator',
+      description: 'Tantiyahin ang ipon at dibidendo mo sa Pag-IBIG MP2 pagkatapos ng 5 taon, gamit ang opisyal na MP2 return rate.',
+      intro:
+        'Maglagay ng isang bagsakang halaga, buwanang halaga, o pareho, at pumili ng dividend rate. Walang opisyal na MP2 calculator ang Pag-IBIG, kaya tantiya ito batay sa opisyal na return rate.',
+    },
+  },
 ];
 
 export function getCalculator(slug: string): Calculator | undefined {
@@ -102,6 +121,46 @@ export function averageDailySalaryCredit(credits: number[]): number {
     .sort((a, b) => b - a)
     .slice(0, 6);
   return top6.reduce((s, n) => s + n, 0) / 180;
+}
+
+// ---------- Pag-IBIG MP2 ----------
+
+/** Official MP2 return rates (pagibigfund.gov.ph/member_savings_mp2.html, read 2026-11-24). */
+export const MP2_RATES: { year: number; rate: number }[] = [
+  { year: 2025, rate: 7.12 },
+  { year: 2024, rate: 7.1 },
+  { year: 2023, rate: 7.05 },
+  { year: 2022, rate: 7.03 },
+  { year: 2021, rate: 6.0 },
+];
+export const MP2_MIN_REMITTANCE = 500;
+
+export type Mp2Year = { year: number; deposits: number; dividend: number; balance: number };
+
+/**
+ * Simple 5-year MP2 projection. Assumptions (Pag-IBIG does not publish its exact method):
+ * the one-time amount is deposited at the start; each monthly deposit is made at the start of
+ * its month and earns dividends for the months left in that year; dividends are credited once
+ * a year at the same rate every year. "compounded" adds them to the balance; "annual" pays them out.
+ */
+export function mp2Projection(lumpSum: number, monthly: number, ratePct: number, payout: 'compounded' | 'annual') {
+  const r = ratePct / 100;
+  let balance = Math.max(lumpSum, 0);
+  let principal = balance;
+  let paidOut = 0;
+  const years: Mp2Year[] = [];
+  for (let y = 1; y <= 5; y++) {
+    const m = Math.max(monthly, 0);
+    // A deposit made at the start of month k earns (13 - k) / 12 of a year: 12/12 + 11/12 + … + 1/12 = 6.5 months' worth.
+    const dividend = balance * r + m * r * (78 / 12);
+    principal += m * 12;
+    balance += m * 12;
+    if (payout === 'compounded') balance += dividend;
+    else paidOut += dividend;
+    years.push({ year: y, deposits: m * 12 + (y === 1 ? Math.max(lumpSum, 0) : 0), dividend, balance });
+  }
+  const totalDividends = years.reduce((s, y) => s + y.dividend, 0);
+  return { years, principal, totalDividends, atMaturity: balance, paidOut };
 }
 
 /** SSS monthly pension: the highest of the three official formulas. */

@@ -97,7 +97,7 @@ export function SssDailyBenefitCalculator({ locale, mode }: { locale: Locale; mo
   const years = [thisYear - 2, thisYear - 1, thisYear, thisYear + 1];
 
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <div className="grid gap-5 sm:grid-cols-2">
         <Field id={`${id}-m`} label={t.month[mode]}>
           <select id={`${id}-m`} className={inputClass} value={month} onChange={(e) => setMonth(Number(e.target.value))}>

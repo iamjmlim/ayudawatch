@@ -51,7 +51,7 @@ export function SssPensionCalculator({ locale }: { locale: Locale }) {
   const r = ready ? sssPension(a, y) : null;
 
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-6">
       <div className="grid gap-5 sm:grid-cols-2">
         <Field id={`${id}-amsc`} label={t.amsc} hint={t.amscHint}>
           <input id={`${id}-amsc`} inputMode="decimal" className={inputClass} placeholder="₱" value={amsc} onChange={(e) => setAmsc(e.target.value)} />
