@@ -4,6 +4,10 @@ import { pagibigMp2 } from './pagibig-mp2.ts';
 import { philhealthSeniorCitizens } from './philhealth-senior-citizens.ts';
 import { retirementPayGuide } from './retirement-pay.ts';
 import { separationPayGuide } from './separation-pay.ts';
+import { sssCalamityLoan } from './sss-calamity-loan.ts';
+import { sssDeathBenefit } from './sss-death-benefit.ts';
+import { sssDisabilityBenefit } from './sss-disability-benefit.ts';
+import { sssVoluntaryMember } from './sss-voluntary-member.ts';
 import { sssFuneralBenefit } from './sss-funeral-benefit.ts';
 import { sssMaternityBenefit } from './sss-maternity-benefit.ts';
 import { sssRetirementBenefit } from './sss-retirement-benefit.ts';
@@ -25,6 +29,10 @@ export const GUIDES: Guide[] = [
   sssMaternityBenefit,
   sssUnemploymentBenefit,
   sssFuneralBenefit,
+  sssCalamityLoan,
+  sssDisabilityBenefit,
+  sssDeathBenefit,
+  sssVoluntaryMember,
   philhealthSeniorCitizens,
   pagibigMp2,
   separationPayGuide,
