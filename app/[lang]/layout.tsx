@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { hreflang } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 import { Analytics } from '@vercel/analytics/next';
+import { Info } from 'lucide-react';
 import { Geist, Geist_Mono, Newsreader } from 'next/font/google';
 import { SiteHeader } from '@/components/site/site-header';
 import { SiteFooter } from '@/components/site/site-footer';
@@ -66,8 +67,9 @@ export default async function SiteLayout({
         >
           {getDictionary(lang).skipToContent}
         </a>
-        {/* Shown on every page so no one mistakes this for an agency site. */}
-        <p className="bg-foreground px-4 py-1.5 text-center text-xs text-background sm:text-[0.8125rem]">
+        {/* Shown on every page so no one mistakes this for an agency site: quiet, but always there. */}
+        <p className="mx-auto flex w-full max-w-5xl items-start gap-1.5 px-4 pt-2.5 text-xs leading-snug text-muted-foreground sm:px-6">
+          <Info className="mt-px size-3.5 shrink-0" aria-hidden />
           {getDictionary(lang).notGov}
         </p>
         <SiteHeader locale={lang} />
