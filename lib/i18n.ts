@@ -91,7 +91,7 @@ const en = {
   calculatorsIntro:
     'Estimate your SSS, PhilHealth and Pag-IBIG contributions and benefits with the formulas on the official agency pages. Results are estimates: the amounts the agencies approve are final.',
   calcNotice:
-    'This is an estimate, not an official SSS computation. It uses only the formula on the official page linked below and the numbers you enter. AyudaWatch does not save what you type.',
+    'This is an estimate, not an official computation by the agency. It uses only the rules in the sources linked below and the numbers you enter. AyudaWatch does not save what you type.',
   calcGuide: 'Read the full guide',
   calcCta: 'Estimate your benefit',
   checker: 'Which benefits?',
@@ -189,7 +189,7 @@ const fil: Dictionary = {
   calculatorsIntro:
     'Tantiyahin ang mga hulog at benepisyo mo sa SSS, PhilHealth at Pag-IBIG gamit ang mga formula sa opisyal na pahina ng mga ahensya. Tantiya lamang ang resulta: ang halagang aaprubahan ng ahensya ang pinal.',
   calcNotice:
-    'Tantiya lamang ito, hindi opisyal na kuwenta ng SSS. Ang formula lang sa opisyal na pahinang naka-link sa ibaba at ang mga numerong inilagay mo ang ginagamit nito. Hindi sine-save ng AyudaWatch ang tina-type mo.',
+    'Tantiya lamang ito, hindi opisyal na kuwenta ng ahensya. Ang mga patakaran lang sa mga source na naka-link sa ibaba at ang mga numerong inilagay mo ang ginagamit nito. Hindi sine-save ng AyudaWatch ang tina-type mo.',
   calcGuide: 'Basahin ang buong gabay',
   calcCta: 'Tantiyahin ang benepisyo mo',
   checker: 'Aling benepisyo?',

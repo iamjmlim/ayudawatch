@@ -1,4 +1,5 @@
 import type { CategorySlug } from '../i18n';
+import { holidayPayGuide } from './holiday-pay.ts';
 import { pagibigMp2 } from './pagibig-mp2.ts';
 import { philhealthSeniorCitizens } from './philhealth-senior-citizens.ts';
 import { sssFuneralBenefit } from './sss-funeral-benefit.ts';
@@ -15,6 +16,7 @@ export type { Guide, GuideSection, GuideText } from './types.ts';
 // Add new guides here. Order = order on the Guides page.
 export const GUIDES: Guide[] = [
   thirteenthMonthPay, // first while 13th month pay season lasts (Dec 24 deadline)
+  holidayPayGuide, // second: December holidays
   sssSalaryLoan,
   sssRetirementBenefit,
   sssSicknessBenefit,

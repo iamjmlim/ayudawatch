@@ -12,6 +12,7 @@ type Params = Promise<{ lang: string }>;
 // Situation -> the guides and calculators that cover it.
 const SITUATIONS: { key: string; en: string; fil: string; guides: string[]; calculators: string[] }[] = [
   { key: '13th', en: 'I am a private-sector employee and want to know my 13th month pay', fil: 'Empleyado ako sa pribadong sektor at gusto kong malaman ang 13th month pay ko', guides: ['thirteenth-month-pay'], calculators: ['thirteenth-month'] },
+  { key: 'holiday', en: 'I am working (or not working) on a holiday', fil: 'Magtatrabaho (o hindi) ako sa holiday', guides: ['holiday-pay'], calculators: ['holiday-pay'] },
   { key: 'loan', en: 'I need a short-term cash loan and I am an SSS member', fil: 'Kailangan ko ng panandaliang cash loan at miyembro ako ng SSS', guides: ['sss-salary-loan'], calculators: [] },
   { key: 'pregnant', en: 'I am pregnant, gave birth, or had a miscarriage', fil: 'Buntis ako, nanganak, o nakunan', guides: ['sss-maternity-benefit'], calculators: ['sss-maternity'] },
   { key: 'sick', en: 'I am sick or injured and cannot work for 4 days or more', fil: 'May sakit o pinsala ako at hindi makapagtrabaho nang 4 na araw o higit pa', guides: ['sss-sickness-benefit'], calculators: ['sss-sickness'] },
