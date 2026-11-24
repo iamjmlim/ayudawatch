@@ -6,7 +6,7 @@ import type { CategorySlug } from './i18n.ts';
 export type CalculatorText = { title: string; description: string; intro: string };
 
 export type Calculator = {
-  slug: 'contributions' | 'sss-pension' | 'sss-maternity' | 'sss-sickness' | 'pagibig-mp2';
+  slug: 'thirteenth-month' | 'contributions' | 'sss-pension' | 'sss-maternity' | 'sss-sickness' | 'pagibig-mp2';
   category: CategorySlug;
   checkedOn: string;
   guideSlug?: string; // the matching guide, if there is one
@@ -16,6 +16,26 @@ export type Calculator = {
 };
 
 export const CALCULATORS: Calculator[] = [
+  {
+    slug: 'thirteenth-month',
+    category: 'trabaho',
+    checkedOn: '2026-11-25',
+    guideSlug: 'thirteenth-month-pay',
+    sources: [
+      { name: 'DOLE Revised Guidelines on the 13th Month Pay Law (PD 851), full text', url: 'https://www.chanrobles.com/revised13thmonthpayguidelines.htm' },
+      { name: 'Daily Tribune: DOLE Labor Advisory No. 21, Series of 2026', url: 'https://tribune.net.ph/2026/11/10/dole-issues-13th-month-pay-rules' },
+    ],
+    en: {
+      title: '13th month pay calculator 2026',
+      description: 'Compute your 13th month pay: 1/12 of your total basic pay this year, including pro-rated pay if you resigned or were hired this year.',
+      intro: 'Enter your monthly basic pay and the months you worked this year, or your total basic pay. The law sets the minimum at 1/12 of your total basic salary for the year, due by December 24.',
+    },
+    fil: {
+      title: '13th month pay calculator 2026',
+      description: 'Kuwentahin ang 13th month pay mo: 1/12 ng kabuuang basic pay mo ngayong taon, kasama ang pro-rated kung nag-resign ka o bagong pasok ngayong taon.',
+      intro: 'Ilagay ang buwanang basic pay mo at ang mga buwang nagtrabaho ka ngayong taon, o ang kabuuang basic pay mo. Itinakda ng batas ang minimum na 1/12 ng kabuuang basic salary sa loob ng taon, na dapat ibigay hanggang Disyembre 24.',
+    },
+  },
   {
     slug: 'contributions',
     category: 'sss-gsis',

@@ -7,12 +7,14 @@ import { sssRetirementBenefit } from './sss-retirement-benefit.ts';
 import { sssSalaryLoan } from './sss-salary-loan.ts';
 import { sssSicknessBenefit } from './sss-sickness-benefit.ts';
 import { sssUnemploymentBenefit } from './sss-unemployment-benefit.ts';
+import { thirteenthMonthPay } from './thirteenth-month-pay.ts';
 import type { Guide } from './types.ts';
 
 export type { Guide, GuideSection, GuideText } from './types.ts';
 
 // Add new guides here. Order = order on the Guides page.
 export const GUIDES: Guide[] = [
+  thirteenthMonthPay, // first while 13th month pay season lasts (Dec 24 deadline)
   sssSalaryLoan,
   sssRetirementBenefit,
   sssSicknessBenefit,
