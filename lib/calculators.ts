@@ -1,13 +1,30 @@
 import type { CategorySlug } from './i18n.ts';
 import { HOLIDAY_PAY_CHECKED_ON, HOLIDAY_PAY_SOURCES, HOLIDAYS_2027_SOURCES } from './holiday-pay.ts';
+import { TAX_CHECKED_ON, TAX_SOURCES } from './tax.ts';
+import { LABOR_CHECKED_ON, LABOR_CODE_SOURCE } from './labor.ts';
 
 // Benefit calculators. Every formula comes from the official page in `sources`
 // (read on `checkedOn`); the calculator components only do that arithmetic.
 
-export type CalculatorText = { title: string; description: string; intro: string };
+export type CalculatorText = {
+  title: string;
+  description: string;
+  intro: string;
+};
 
 export type Calculator = {
-  slug: 'thirteenth-month' | 'holiday-pay' | 'contributions' | 'sss-pension' | 'sss-maternity' | 'sss-sickness' | 'pagibig-mp2';
+  slug:
+    | 'thirteenth-month'
+    | 'holiday-pay'
+    | 'take-home-pay'
+    | 'overtime-pay'
+    | 'separation-pay'
+    | 'retirement-pay'
+    | 'contributions'
+    | 'sss-pension'
+    | 'sss-maternity'
+    | 'sss-sickness'
+    | 'pagibig-mp2';
   category: CategorySlug;
   checkedOn: string;
   guideSlug?: string; // the matching guide, if there is one
@@ -23,18 +40,26 @@ const CALCULATOR_LIST: Calculator[] = [
     checkedOn: '2026-11-25',
     guideSlug: 'thirteenth-month-pay',
     sources: [
-      { name: 'DOLE Revised Guidelines on the 13th Month Pay Law (PD 851), full text', url: 'https://www.chanrobles.com/revised13thmonthpayguidelines.htm' },
-      { name: 'Daily Tribune: DOLE Labor Advisory No. 21, Series of 2026', url: 'https://tribune.net.ph/2026/11/10/dole-issues-13th-month-pay-rules' },
+      {
+        name: 'DOLE Revised Guidelines on the 13th Month Pay Law (PD 851), full text',
+        url: 'https://www.chanrobles.com/revised13thmonthpayguidelines.htm',
+      },
+      {
+        name: 'Daily Tribune: DOLE Labor Advisory No. 21, Series of 2026',
+        url: 'https://tribune.net.ph/2026/11/10/dole-issues-13th-month-pay-rules',
+      },
     ],
     en: {
       title: '13th month pay calculator 2026',
       description: 'Compute your 13th month pay: 1/12 of your total basic pay this year, including pro-rated pay if you resigned or were hired this year.',
-      intro: 'Enter your monthly basic pay and the months you worked this year, or your total basic pay. The law sets the minimum at 1/12 of your total basic salary for the year, due by December 24.',
+      intro:
+        'Enter your monthly basic pay and the months you worked this year, or your total basic pay. The law sets the minimum at 1/12 of your total basic salary for the year, due by December 24.',
     },
     fil: {
       title: '13th month pay calculator 2026',
       description: 'Kuwentahin ang 13th month pay mo: 1/12 ng kabuuang basic pay mo ngayong taon, kasama ang pro-rated kung nag-resign ka o bagong pasok ngayong taon.',
-      intro: 'Ilagay ang buwanang basic pay mo at ang mga buwang nagtrabaho ka ngayong taon, o ang kabuuang basic pay mo. Itinakda ng batas ang minimum na 1/12 ng kabuuang basic salary sa loob ng taon, na dapat ibigay hanggang Disyembre 24.',
+      intro:
+        'Ilagay ang buwanang basic pay mo at ang mga buwang nagtrabaho ka ngayong taon, o ang kabuuang basic pay mo. Itinakda ng batas ang minimum na 1/12 ng kabuuang basic salary sa loob ng taon, na dapat ibigay hanggang Disyembre 24.',
     },
   },
   {
@@ -46,12 +71,15 @@ const CALCULATOR_LIST: Calculator[] = [
     en: {
       title: 'Holiday pay calculator 2026–2027',
       description: 'Compute your pay for working (or not working) on a 2026 regular holiday or special day, including rest days and overtime, using DOLE’s official rates.',
-      intro: 'Pick the holiday, enter your basic daily wage, and say whether you worked. The calculator uses DOLE’s 2026 rules: 200% on regular holidays, 130% on special days, with higher rates on rest days and for overtime.',
+      intro:
+        'Pick the holiday, enter your basic daily wage, and say whether you worked. The calculator uses DOLE’s 2026 rules: 200% on regular holidays, 130% on special days, with higher rates on rest days and for overtime.',
     },
     fil: {
       title: 'Holiday pay calculator 2026–2027',
-      description: 'Kuwentahin ang sahod mo sa pagtatrabaho (o hindi pagtatrabaho) sa regular holiday o special day sa 2026, kasama ang rest day at overtime, gamit ang opisyal na rate ng DOLE.',
-      intro: 'Piliin ang holiday, ilagay ang arawang basic na sahod mo, at sabihin kung nagtrabaho ka. Ginagamit ng calculator ang mga patakaran ng DOLE para sa 2026: 200% sa regular holiday, 130% sa special day, at mas mataas sa rest day at overtime.',
+      description:
+        'Kuwentahin ang sahod mo sa pagtatrabaho (o hindi pagtatrabaho) sa regular holiday o special day sa 2026, kasama ang rest day at overtime, gamit ang opisyal na rate ng DOLE.',
+      intro:
+        'Piliin ang holiday, ilagay ang arawang basic na sahod mo, at sabihin kung nagtrabaho ka. Ginagamit ng calculator ang mga patakaran ng DOLE para sa 2026: 200% sa regular holiday, 130% sa special day, at mas mataas sa rest day at overtime.',
     },
   },
   {
@@ -59,19 +87,30 @@ const CALCULATOR_LIST: Calculator[] = [
     category: 'sss-gsis',
     checkedOn: '2026-11-24',
     sources: [
-      { name: 'SSS: Contribution Table', url: 'https://www.sss.gov.ph/sss-contribution-table/' },
-      { name: 'PhilHealth: Premium Contribution Table', url: 'https://www.philhealth.gov.ph/partners/employers/ContributionTable_v2.pdf' },
-      { name: 'Pag-IBIG Fund: Regular Savings', url: 'https://www.pagibigfund.gov.ph/Membership_RegularSavings.html' },
+      {
+        name: 'SSS: Contribution Table',
+        url: 'https://www.sss.gov.ph/sss-contribution-table/',
+      },
+      {
+        name: 'PhilHealth: Premium Contribution Table',
+        url: 'https://www.philhealth.gov.ph/partners/employers/ContributionTable_v2.pdf',
+      },
+      {
+        name: 'Pag-IBIG Fund: Regular Savings',
+        url: 'https://www.pagibigfund.gov.ph/Membership_RegularSavings.html',
+      },
     ],
     en: {
       title: 'SSS, PhilHealth and Pag-IBIG contribution calculator 2026',
       description: 'Enter your monthly salary to see your SSS, PhilHealth and Pag-IBIG contributions and your employer’s share, using the official tables.',
-      intro: 'Enter your monthly salary and membership type. The calculator uses the official SSS schedule (effective January 2025), PhilHealth’s 5% premium and Pag-IBIG’s ₱10,000 maximum fund salary.',
+      intro:
+        'Enter your monthly salary and membership type. The calculator uses the official SSS schedule (effective January 2025), PhilHealth’s 5% premium and Pag-IBIG’s ₱10,000 maximum fund salary.',
     },
     fil: {
       title: 'SSS, PhilHealth at Pag-IBIG contribution calculator 2026',
       description: 'Ilagay ang buwanang sahod mo para makita ang hulog mo sa SSS, PhilHealth at Pag-IBIG at ang hati ng employer, gamit ang mga opisyal na table.',
-      intro: 'Ilagay ang buwanang sahod at uri ng membership mo. Ginagamit ng calculator ang opisyal na SSS schedule (epektibo Enero 2025), ang 5% premium ng PhilHealth at ang ₱10,000 maximum fund salary ng Pag-IBIG.',
+      intro:
+        'Ilagay ang buwanang sahod at uri ng membership mo. Ginagamit ng calculator ang opisyal na SSS schedule (epektibo Enero 2025), ang 5% premium ng PhilHealth at ang ₱10,000 maximum fund salary ng Pag-IBIG.',
     },
   },
   {
@@ -80,8 +119,14 @@ const CALCULATOR_LIST: Calculator[] = [
     checkedOn: '2026-11-25',
     guideSlug: 'sss-retirement-benefit',
     sources: [
-      { name: 'SSS: Retirement Benefit', url: 'https://www.sss.gov.ph/retirement-benefit/' },
-      { name: 'Department of Finance: SSS 2026 pension increase (June 2, 2026)', url: 'https://www.dof.gov.ph/sss-begins-early-june-rollout-of-2026-pension-hike-citing-need-for-early-relief-for-pensioners/' },
+      {
+        name: 'SSS: Retirement Benefit',
+        url: 'https://www.sss.gov.ph/retirement-benefit/',
+      },
+      {
+        name: 'Department of Finance: SSS 2026 pension increase (June 2, 2026)',
+        url: 'https://www.dof.gov.ph/sss-begins-early-june-rollout-of-2026-pension-hike-citing-need-for-early-relief-for-pensioners/',
+      },
     ],
     en: {
       title: 'SSS pension calculator',
@@ -101,12 +146,16 @@ const CALCULATOR_LIST: Calculator[] = [
     category: 'sss-gsis',
     checkedOn: '2026-11-24',
     guideSlug: 'sss-maternity-benefit',
-    sources: [{ name: 'SSS: Maternity Benefit', url: 'https://www.sss.gov.ph/maternity-benefit/' }],
+    sources: [
+      {
+        name: 'SSS: Maternity Benefit',
+        url: 'https://www.sss.gov.ph/maternity-benefit/',
+      },
+    ],
     en: {
       title: 'SSS maternity benefit calculator',
       description: 'Estimate your SSS maternity benefit for 105, 120 or 60 days using the official SSS computation.',
-      intro:
-        'Pick the month of your delivery (or expected delivery), see which 12 months SSS looks at, then enter your 6 highest monthly salary credits from those months.',
+      intro: 'Pick the month of your delivery (or expected delivery), see which 12 months SSS looks at, then enter your 6 highest monthly salary credits from those months.',
     },
     fil: {
       title: 'SSS maternity benefit calculator',
@@ -120,12 +169,16 @@ const CALCULATOR_LIST: Calculator[] = [
     category: 'sss-gsis',
     checkedOn: '2026-11-24',
     guideSlug: 'sss-sickness-benefit',
-    sources: [{ name: 'SSS: Sickness Benefit', url: 'https://www.sss.gov.ph/sickness-benefit/' }],
+    sources: [
+      {
+        name: 'SSS: Sickness Benefit',
+        url: 'https://www.sss.gov.ph/sickness-benefit/',
+      },
+    ],
     en: {
       title: 'SSS sickness benefit calculator',
       description: 'Estimate your SSS sickness benefit (90% of your average daily salary credit) using the official SSS computation.',
-      intro:
-        'Pick the month you got sick, see which 12 months SSS looks at, then enter your 6 highest monthly salary credits from those months and the number of days.',
+      intro: 'Pick the month you got sick, see which 12 months SSS looks at, then enter your 6 highest monthly salary credits from those months and the number of days.',
     },
     fil: {
       title: 'SSS sickness benefit calculator',
@@ -139,7 +192,12 @@ const CALCULATOR_LIST: Calculator[] = [
     category: 'pabahay',
     checkedOn: '2026-11-24',
     guideSlug: 'pagibig-mp2',
-    sources: [{ name: 'Pag-IBIG Fund: MP2 Savings', url: 'https://www.pagibigfund.gov.ph/member_savings_mp2.html' }],
+    sources: [
+      {
+        name: 'Pag-IBIG Fund: MP2 Savings',
+        url: 'https://www.pagibigfund.gov.ph/member_savings_mp2.html',
+      },
+    ],
     en: {
       title: 'Pag-IBIG MP2 calculator',
       description: 'Estimate your Pag-IBIG MP2 savings and dividends after 5 years, using the official MP2 return rates.',
@@ -153,6 +211,80 @@ const CALCULATOR_LIST: Calculator[] = [
         'Maglagay ng isang bagsakang halaga, buwanang halaga, o pareho, at pumili ng dividend rate. Walang opisyal na MP2 calculator ang Pag-IBIG, kaya tantiya ito batay sa opisyal na return rate.',
     },
   },
+  {
+    slug: 'take-home-pay',
+    category: 'trabaho',
+    checkedOn: TAX_CHECKED_ON,
+    sources: TAX_SOURCES,
+    en: {
+      title: 'Take-home pay and income tax calculator 2026',
+      description: 'Compute your monthly net pay after SSS, PhilHealth, Pag-IBIG and withholding tax, using the TRAIN law tax table and the official 2026 contribution rates.',
+      intro:
+        'Enter your monthly basic pay and any allowances. The calculator deducts your share of SSS, PhilHealth and Pag-IBIG, then the income tax from the TRAIN law table in force since 2023.',
+    },
+    fil: {
+      title: 'Take-home pay at income tax calculator 2026',
+      description:
+        'Kuwentahin ang buwanang net pay mo pagkatapos ng SSS, PhilHealth, Pag-IBIG at withholding tax, gamit ang tax table ng TRAIN law at ang opisyal na contribution rate sa 2026.',
+      intro:
+        'Ilagay ang buwanang basic pay mo at anumang allowance. Ibabawas ng calculator ang bahagi mo sa SSS, PhilHealth at Pag-IBIG, at ang income tax mula sa tax table ng TRAIN law na umiiral mula 2023.',
+    },
+  },
+  {
+    slug: 'overtime-pay',
+    category: 'trabaho',
+    checkedOn: LABOR_CHECKED_ON,
+    sources: [LABOR_CODE_SOURCE],
+    en: {
+      title: 'Overtime and night differential calculator',
+      description: 'Compute your overtime pay (+25%, or +30% on a rest day) and night shift differential (+10% from 10 PM to 6 AM) under the Labor Code.',
+      intro:
+        'Enter your daily wage and the hours you worked. Under the Labor Code, overtime is paid at least 25% more per hour (30% more on top of the rest-day rate), and each hour from 10 PM to 6 AM earns at least 10% more.',
+    },
+    fil: {
+      title: 'Overtime at night differential calculator',
+      description: 'Kuwentahin ang overtime pay (+25%, o +30% sa rest day) at night shift differential (+10% mula 10 PM hanggang 6 AM) ayon sa Labor Code.',
+      intro:
+        'Ilagay ang arawang sahod mo at ang oras na nagtrabaho ka. Sa Labor Code, hindi bababa sa 25% ang dagdag kada oras ng overtime (30% dagdag sa rest-day rate), at hindi bababa sa 10% ang dagdag sa bawat oras mula 10 PM hanggang 6 AM.',
+    },
+  },
+  {
+    slug: 'separation-pay',
+    category: 'trabaho',
+    checkedOn: LABOR_CHECKED_ON,
+    guideSlug: 'separation-pay',
+    sources: [LABOR_CODE_SOURCE],
+    en: {
+      title: 'Separation pay calculator',
+      description: 'Compute the minimum separation pay under the Labor Code for redundancy, retrenchment, closure or illness: 1 month or ½ month per year of service.',
+      intro: 'Pick why your job ended, then enter your monthly pay and years of service. The Labor Code sets the minimum; your contract or company policy may give more.',
+    },
+    fil: {
+      title: 'Separation pay calculator',
+      description: 'Kuwentahin ang pinakamababang separation pay sa Labor Code para sa redundancy, retrenchment, pagsasara o sakit: 1 buwan o ½ buwan kada taon ng serbisyo.',
+      intro:
+        'Piliin kung bakit natapos ang trabaho mo, saka ilagay ang buwanang sahod at taon ng serbisyo. Ang Labor Code ang nagtatakda ng pinakamababa; puwedeng higit pa ang ibigay ng kontrata o patakaran ng kompanya.',
+    },
+  },
+  {
+    slug: 'retirement-pay',
+    category: 'trabaho',
+    checkedOn: LABOR_CHECKED_ON,
+    guideSlug: 'retirement-pay',
+    sources: [LABOR_CODE_SOURCE],
+    en: {
+      title: 'Retirement pay calculator (RA 7641)',
+      description: 'Compute the retirement pay your employer owes under the Labor Code and RA 7641: 22.5 days’ pay for every year of service, from age 60.',
+      intro:
+        'Enter your daily rate, age and years of service. The law gives at least ½ month salary (22.5 days’ pay) for every year of service to employees aged 60 to 65 with at least 5 years of service.',
+    },
+    fil: {
+      title: 'Retirement pay calculator (RA 7641)',
+      description: 'Kuwentahin ang retirement pay na dapat ibigay ng employer ayon sa Labor Code at RA 7641: 22.5 araw na sahod kada taon ng serbisyo, mula edad 60.',
+      intro:
+        'Ilagay ang daily rate, edad at taon ng serbisyo mo. Nagbibigay ang batas ng hindi bababa sa ½ buwang sahod (22.5 araw na sahod) kada taon ng serbisyo sa mga empleyadong edad 60 hanggang 65 na may hindi bababa sa 5 taon ng serbisyo.',
+    },
+  },
 ];
 
 // Display order: most-searched first, by Google Trends and autocomplete for the Philippines
@@ -161,16 +293,18 @@ const CALCULATOR_LIST: Calculator[] = [
 const DEMAND_ORDER: Calculator['slug'][] = [
   'thirteenth-month', // seasonal: biggest spike every December
   'holiday-pay', // seasonal: December holidays
+  'take-home-pay', // 'salary calculator philippines' / 'tax calculator philippines' are searched all year
   'pagibig-mp2', // highest year-round search interest of the topics checked
   'contributions', // 'sss contribution table 2026' is the top SSS search
   'sss-pension', // 'sss pension calculator' is the top suggestion for 'sss pension'
   'sss-maternity',
   'sss-sickness',
+  'overtime-pay',
+  'separation-pay',
+  'retirement-pay',
 ];
 
-export const CALCULATORS: Calculator[] = [...CALCULATOR_LIST].sort(
-  (a, b) => DEMAND_ORDER.indexOf(a.slug) - DEMAND_ORDER.indexOf(b.slug),
-);
+export const CALCULATORS: Calculator[] = [...CALCULATOR_LIST].sort((a, b) => DEMAND_ORDER.indexOf(a.slug) - DEMAND_ORDER.indexOf(b.slug));
 
 export function getCalculator(slug: string): Calculator | undefined {
   return CALCULATORS.find((c) => c.slug === slug);
@@ -213,7 +347,12 @@ export const MP2_RATES: { year: number; rate: number }[] = [
 ];
 export const MP2_MIN_REMITTANCE = 500;
 
-export type Mp2Year = { year: number; deposits: number; dividend: number; balance: number };
+export type Mp2Year = {
+  year: number;
+  deposits: number;
+  dividend: number;
+  balance: number;
+};
 
 /**
  * Simple 5-year MP2 projection. Assumptions (Pag-IBIG does not publish its exact method):
@@ -235,7 +374,12 @@ export function mp2Projection(lumpSum: number, monthly: number, ratePct: number,
     balance += m * 12;
     if (payout === 'compounded') balance += dividend;
     else paidOut += dividend;
-    years.push({ year: y, deposits: m * 12 + (y === 1 ? Math.max(lumpSum, 0) : 0), dividend, balance });
+    years.push({
+      year: y,
+      deposits: m * 12 + (y === 1 ? Math.max(lumpSum, 0) : 0),
+      dividend,
+      balance,
+    });
   }
   const totalDividends = years.reduce((s, y) => s + y.dividend, 0);
   return { years, principal, totalDividends, atMaturity: balance, paidOut };
@@ -253,5 +397,13 @@ export function sssPension(amsc: number, cys: number) {
   const monthly = Math.max(formula1, formula2, minimum);
   // SSS Pension Reform Program: +10% for retirement pensions in Sept 2025 and June 2026 (compounded).
   const withReform = monthly * PENSION_REFORM_FACTOR;
-  return { formula1, formula2, minimum, monthly, withAdditional: monthly + 1_000, withReform, withReformAndAdditional: withReform + 1_000 };
+  return {
+    formula1,
+    formula2,
+    minimum,
+    monthly,
+    withAdditional: monthly + 1_000,
+    withReform,
+    withReformAndAdditional: withReform + 1_000,
+  };
 }

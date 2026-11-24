@@ -2,6 +2,8 @@ import type { CategorySlug } from '../i18n';
 import { holidayPayGuide } from './holiday-pay.ts';
 import { pagibigMp2 } from './pagibig-mp2.ts';
 import { philhealthSeniorCitizens } from './philhealth-senior-citizens.ts';
+import { retirementPayGuide } from './retirement-pay.ts';
+import { separationPayGuide } from './separation-pay.ts';
 import { sssFuneralBenefit } from './sss-funeral-benefit.ts';
 import { sssMaternityBenefit } from './sss-maternity-benefit.ts';
 import { sssRetirementBenefit } from './sss-retirement-benefit.ts';
@@ -25,6 +27,8 @@ export const GUIDES: Guide[] = [
   sssFuneralBenefit,
   philhealthSeniorCitizens,
   pagibigMp2,
+  separationPayGuide,
+  retirementPayGuide,
 ];
 
 export function getGuide(slug: string): Guide | undefined {
