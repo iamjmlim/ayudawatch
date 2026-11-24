@@ -33,8 +33,8 @@ const T = {
     ] as [number, string][],
     daily: { maternity: 'Daily maternity allowance', sickness: 'Daily sickness allowance' },
     total: { maternity: 'Estimated maternity benefit', sickness: 'Estimated sickness benefit' },
-    sub: (daily: string, days: number) => `${daily} a day × ${days} days`,
-    adsc: (adsc: string) => `Average daily salary credit: ${adsc} (your 6 highest salary credits ÷ 180).`,
+    sub: (total: string, days: number, pct: string) => `${total} (your 6 highest salary credits) ÷ 180${pct} × ${days} days`,
+    adsc: (adsc: string) => `That is about ${adsc} a day. SSS multiplies before rounding, so the daily amount shown is rounded.`,
     pct: { maternity: 'The maternity allowance is 100% of it.', sickness: 'The sickness allowance is 90% of it.' },
     empty: 'Enter at least one salary credit to see an estimate.',
     employed:
@@ -61,8 +61,8 @@ const T = {
     ] as [number, string][],
     daily: { maternity: 'Arawang maternity allowance', sickness: 'Arawang sickness allowance' },
     total: { maternity: 'Tantiyang maternity benefit', sickness: 'Tantiyang sickness benefit' },
-    sub: (daily: string, days: number) => `${daily} kada araw × ${days} araw`,
-    adsc: (adsc: string) => `Average daily salary credit: ${adsc} (6 na pinakamataas na salary credit ÷ 180).`,
+    sub: (total: string, days: number, pct: string) => `${total} (6 na pinakamataas na salary credit) ÷ 180${pct} × ${days} araw`,
+    adsc: (adsc: string) => `Humigit-kumulang ${adsc} kada araw. Nagmu-multiply muna ang SSS bago mag-round, kaya naka-round ang arawang halagang ipinapakita.`,
     pct: { maternity: 'Ang maternity allowance ay 100% nito.', sickness: 'Ang sickness allowance ay 90% nito.' },
     empty: 'Maglagay ng kahit isang salary credit para makita ang tantiya.',
     employed:
@@ -166,9 +166,9 @@ export function SssDailyBenefitCalculator({ locale, mode }: { locale: Locale; mo
           value={peso(dailyAllowance * d)}
           sub={
             <>
-              <p>{t.sub(peso(dailyAllowance), d)}</p>
+              <p>{t.sub(peso(adsc * 180), d, mode === 'sickness' ? ' × 90%' : '')}</p>
               <p>
-                {t.adsc(peso(adsc))} {t.pct[mode]}
+                {t.adsc(peso(dailyAllowance))} {t.pct[mode]}
               </p>
               {mode === 'maternity' && <p className="mt-2">{t.employed}</p>}
             </>

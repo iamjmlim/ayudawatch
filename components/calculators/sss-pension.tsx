@@ -13,6 +13,8 @@ const T = {
     cysHint: 'The number of years with contributions in your SSS record.',
     result: 'Estimated monthly pension',
     plus: (n: string) => `${n} including the additional ₱1,000 that SSS has paid all retirement pensioners since January 1, 2017.`,
+    reform: (n: string, m: string) =>
+      `With the Pension Reform increases (10% in September 2025 and 10% more from June 2026), this formula amount becomes about ${n}, or ${m} with the ₱1,000. Another 10% is scheduled for September 2027. SSS has not published how the increases apply to each new retiree, so confirm your final amount with SSS.`,
     how: 'How it was computed',
     f1: '₱300 + 20% of AMSC + 2% of AMSC for each year beyond 10',
     f2: '40% of AMSC',
@@ -29,6 +31,8 @@ const T = {
     cysHint: 'Ang bilang ng taon na may kontribusyon sa record mo sa SSS.',
     result: 'Tantiyang buwanang pension',
     plus: (n: string) => `${n} kasama ang dagdag na ₱1,000 na ibinibigay ng SSS sa lahat ng retirement pensioner mula Enero 1, 2017.`,
+    reform: (n: string, m: string) =>
+      `Kasama ang mga dagdag sa ilalim ng Pension Reform (10% noong Setyembre 2025 at 10% pa mula Hunyo 2026), ang halagang ito ay magiging humigit-kumulang ${n}, o ${m} kasama ang ₱1,000. May isa pang 10% na nakatakda sa Setyembre 2027. Hindi pa inilalathala ng SSS kung paano ito ilalapat sa bawat bagong retirado, kaya kumpirmahin sa SSS ang pinal na halaga.`,
     how: 'Paano ito kinuwenta',
     f1: '₱300 + 20% ng AMSC + 2% ng AMSC sa bawat taon na lampas sa 10',
     f2: '40% ng AMSC',
@@ -67,7 +71,16 @@ export function SssPensionCalculator({ locale }: { locale: Locale }) {
         <Result label={t.result} value="—" sub={<p>{t.lumpSum}</p>} />
       ) : (
         <>
-          <Result label={t.result} value={peso(r.monthly)} sub={<p>{t.plus(peso(r.withAdditional))}</p>} />
+          <Result
+            label={t.result}
+            value={peso(r.monthly)}
+            sub={
+              <>
+                <p>{t.plus(peso(r.withAdditional))}</p>
+                <p className="mt-2">{t.reform(peso(r.withReform), peso(r.withReformAndAdditional))}</p>
+              </>
+            }
+          />
           <section className="text-sm">
             <h2 className="font-semibold">{t.how}</h2>
             <ul className="mt-2 divide-y divide-border rounded-lg border border-border">

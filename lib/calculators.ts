@@ -59,9 +59,12 @@ export const CALCULATORS: Calculator[] = [
   {
     slug: 'sss-pension',
     category: 'sss-gsis',
-    checkedOn: '2026-11-24',
+    checkedOn: '2026-11-25',
     guideSlug: 'sss-retirement-benefit',
-    sources: [{ name: 'SSS: Retirement Benefit', url: 'https://www.sss.gov.ph/retirement-benefit/' }],
+    sources: [
+      { name: 'SSS: Retirement Benefit', url: 'https://www.sss.gov.ph/retirement-benefit/' },
+      { name: 'Department of Finance: SSS 2026 pension increase (June 2, 2026)', url: 'https://www.dof.gov.ph/sss-begins-early-june-rollout-of-2026-pension-hike-citing-need-for-early-relief-for-pensioners/' },
+    ],
     en: {
       title: 'SSS pension calculator',
       description: 'Estimate your SSS monthly retirement pension using the official SSS formula.',
@@ -203,6 +206,9 @@ export function mp2Projection(lumpSum: number, monthly: number, ratePct: number,
   return { years, principal, totalDividends, atMaturity: balance, paidOut };
 }
 
+/** Retirement pension increases already granted under the SSS Pension Reform Program (10% each, compounded). */
+export const PENSION_REFORM_FACTOR = 1.1 * 1.1;
+
 /** SSS monthly pension: the highest of the three official formulas. */
 export function sssPension(amsc: number, cys: number) {
   const a = Math.min(Math.max(amsc, 0), MSC_CAP);
@@ -210,5 +216,7 @@ export function sssPension(amsc: number, cys: number) {
   const formula2 = 0.4 * a;
   const minimum = cys >= 20 ? 2_400 : cys >= 10 ? 1_200 : 0;
   const monthly = Math.max(formula1, formula2, minimum);
-  return { formula1, formula2, minimum, monthly, withAdditional: monthly + 1_000 };
+  // SSS Pension Reform Program: +10% for retirement pensions in Sept 2025 and June 2026 (compounded).
+  const withReform = monthly * PENSION_REFORM_FACTOR;
+  return { formula1, formula2, minimum, monthly, withAdditional: monthly + 1_000, withReform, withReformAndAdditional: withReform + 1_000 };
 }
