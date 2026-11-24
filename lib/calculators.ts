@@ -16,7 +16,7 @@ export type Calculator = {
   fil: CalculatorText;
 };
 
-export const CALCULATORS: Calculator[] = [
+const CALCULATOR_LIST: Calculator[] = [
   {
     slug: 'thirteenth-month',
     category: 'trabaho',
@@ -154,6 +154,23 @@ export const CALCULATORS: Calculator[] = [
     },
   },
 ];
+
+// Display order: most-searched first, by Google Trends and autocomplete for the Philippines
+// (checked 2026-11-24). Seasonal calculators lead while their season lasts:
+// 13th month pay and holiday pay through December. Revisit with real usage data later.
+const DEMAND_ORDER: Calculator['slug'][] = [
+  'thirteenth-month', // seasonal: biggest spike every December
+  'holiday-pay', // seasonal: December holidays
+  'pagibig-mp2', // highest year-round search interest of the topics checked
+  'contributions', // 'sss contribution table 2026' is the top SSS search
+  'sss-pension', // 'sss pension calculator' is the top suggestion for 'sss pension'
+  'sss-maternity',
+  'sss-sickness',
+];
+
+export const CALCULATORS: Calculator[] = [...CALCULATOR_LIST].sort(
+  (a, b) => DEMAND_ORDER.indexOf(a.slug) - DEMAND_ORDER.indexOf(b.slug),
+);
 
 export function getCalculator(slug: string): Calculator | undefined {
   return CALCULATORS.find((c) => c.slug === slug);
