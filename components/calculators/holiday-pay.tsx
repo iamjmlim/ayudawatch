@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { HOLIDAYS_2026, holidayPay, type DayType } from '@/lib/holiday-pay';
+import { ALL_HOLIDAYS, HOLIDAYS_BY_YEAR, holidayPay, type DayType } from '@/lib/holiday-pay';
 import type { Locale } from '@/lib/i18n';
 import { Field, Result, inputClass, peso, toNumber } from './calc-ui';
 
@@ -60,7 +60,7 @@ export function HolidayPayCalculator({ locale }: { locale: Locale }) {
   const [hours, setHours] = useState('8');
   const [restDay, setRestDay] = useState(false);
 
-  const day = HOLIDAYS_2026.find((h) => h.date === date)!;
+  const day = ALL_HOLIDAYS.find((h) => h.date === date)!;
   const r = toNumber(rate);
   const h = toNumber(hours);
   const ready = r > 0 && (!worked || h > 0);
@@ -71,10 +71,14 @@ export function HolidayPayCalculator({ locale }: { locale: Locale }) {
       <div className="grid gap-5 sm:grid-cols-2">
         <Field id={`${id}-d`} label={t.day} hint={t.types[day.type]}>
           <select id={`${id}-d`} className={inputClass} value={date} onChange={(e) => setDate(e.target.value)}>
-            {HOLIDAYS_2026.map((x) => (
-              <option key={x.date} value={x.date}>
-                {fmtDate(x.date, locale)} – {x[locale]}
-              </option>
+            {Object.entries(HOLIDAYS_BY_YEAR).map(([year, list]) => (
+              <optgroup key={year} label={year}>
+                {list.map((x) => (
+                  <option key={x.date} value={x.date}>
+                    {fmtDate(x.date, locale)} {year} – {x[locale]}
+                  </option>
+                ))}
+              </optgroup>
             ))}
           </select>
         </Field>

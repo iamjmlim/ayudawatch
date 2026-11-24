@@ -14,6 +14,11 @@ export const HOLIDAY_PAY_SOURCES = [
 ];
 export const HOLIDAY_PAY_CHECKED_ON = '2026-11-25';
 
+export const HOLIDAYS_2027_SOURCES = [
+  { name: 'Proclamation No. 1427, s. 2026: 2027 holidays (full text, LawPhil)', url: 'https://lawphil.net/executive/proc/proc2026/proc_1427_2026.html' },
+  { name: 'Daily Tribune: DOLE Labor Advisory No. 17, s. 2026 (2027 holiday pay rules)', url: 'https://tribune.net.ph/2026/09/30/dole-lays-out-2027-holiday-pay-rules' },
+];
+
 /** 2026 holidays from Proclamation No. 1006 (Eid'l Fitr and Eid'l Adha are proclaimed separately). */
 export const HOLIDAYS_2026: { date: string; type: DayType; en: string; fil: string }[] = [
   { date: '2026-01-01', type: 'regular', en: 'New Year’s Day', fil: 'Bagong Taon' },
@@ -36,6 +41,56 @@ export const HOLIDAYS_2026: { date: string; type: DayType; en: string; fil: stri
   { date: '2026-12-30', type: 'regular', en: 'Rizal Day', fil: 'Araw ni Rizal' },
   { date: '2026-12-31', type: 'special', en: 'Last Day of the Year', fil: 'Huling Araw ng Taon' },
 ];
+
+
+/** 2027 holidays from Proclamation No. 1427, s. 2026. Pay rules are unchanged (DOLE Labor Advisory No. 17, s. 2026). */
+export const HOLIDAYS_2027: { date: string; type: DayType; en: string; fil: string }[] = [
+  { date: '2027-01-01', type: 'regular', en: 'New Year’s Day', fil: 'Bagong Taon' },
+  { date: '2027-02-06', type: 'special', en: 'Chinese New Year', fil: 'Chinese New Year' },
+  { date: '2027-02-25', type: 'special-working', en: 'EDSA People Power Revolution Anniversary', fil: 'Anibersaryo ng EDSA People Power' },
+  { date: '2027-03-25', type: 'regular', en: 'Maundy Thursday', fil: 'Huwebes Santo' },
+  { date: '2027-03-26', type: 'regular', en: 'Good Friday', fil: 'Biyernes Santo' },
+  { date: '2027-03-27', type: 'special', en: 'Black Saturday', fil: 'Sabado de Gloria' },
+  { date: '2027-04-09', type: 'regular', en: 'Araw ng Kagitingan', fil: 'Araw ng Kagitingan' },
+  { date: '2027-05-01', type: 'regular', en: 'Labor Day', fil: 'Araw ng Paggawa' },
+  { date: '2027-06-12', type: 'regular', en: 'Independence Day', fil: 'Araw ng Kalayaan' },
+  { date: '2027-08-21', type: 'special', en: 'Ninoy Aquino Day', fil: 'Araw ni Ninoy Aquino' },
+  { date: '2027-08-30', type: 'regular', en: 'National Heroes Day', fil: 'Araw ng mga Bayani' },
+  { date: '2027-11-01', type: 'special', en: 'All Saints’ Day', fil: 'Araw ng mga Santo' },
+  { date: '2027-11-02', type: 'special', en: 'All Souls’ Day', fil: 'Araw ng mga Kaluluwa' },
+  { date: '2027-11-30', type: 'regular', en: 'Bonifacio Day', fil: 'Araw ni Bonifacio' },
+  { date: '2027-12-08', type: 'special', en: 'Feast of the Immaculate Conception', fil: 'Kapistahan ng Immaculada Concepcion' },
+  { date: '2027-12-24', type: 'special', en: 'Christmas Eve', fil: 'Bisperas ng Pasko' },
+  { date: '2027-12-25', type: 'regular', en: 'Christmas Day', fil: 'Araw ng Pasko' },
+  { date: '2027-12-30', type: 'regular', en: 'Rizal Day', fil: 'Araw ni Rizal' },
+  { date: '2027-12-31', type: 'special', en: 'Last Day of the Year', fil: 'Huling Araw ng Taon' },
+];
+
+export const HOLIDAYS_BY_YEAR: Record<string, typeof HOLIDAYS_2027> = { '2026': HOLIDAYS_2026, '2027': HOLIDAYS_2027 };
+export const ALL_HOLIDAYS = [...HOLIDAYS_2026, ...HOLIDAYS_2027];
+
+/** Runs of 3+ days off (weekends plus regular holidays and special non-working days) that include a holiday. */
+export function longWeekends(year: string) {
+  const holidays = HOLIDAYS_BY_YEAR[year] ?? [];
+  // Use every known year so breaks spanning New Year (e.g. Dec 30 to Jan 3) are found.
+  const off = new Map(ALL_HOLIDAYS.filter((h) => h.type !== 'special-working').map((h) => [h.date, h]));
+  const iso = (d: Date) => d.toISOString().slice(0, 10);
+  const isOff = (d: Date) => d.getUTCDay() === 0 || d.getUTCDay() === 6 || off.has(iso(d));
+  const seen = new Set<string>();
+  const runs: { start: string; end: string; days: number; holidays: typeof holidays }[] = [];
+  for (const h of holidays.filter((x) => x.type !== 'special-working')) {
+    if (seen.has(h.date)) continue;
+    let start = new Date(`${h.date}T00:00:00Z`);
+    let end = new Date(start);
+    while (isOff(new Date(start.getTime() - 86_400_000))) start = new Date(start.getTime() - 86_400_000);
+    while (isOff(new Date(end.getTime() + 86_400_000))) end = new Date(end.getTime() + 86_400_000);
+    const days = Math.round((end.getTime() - start.getTime()) / 86_400_000) + 1;
+    const inRun = ALL_HOLIDAYS.filter((x) => x.type !== 'special-working' && x.date >= iso(start) && x.date <= iso(end));
+    inRun.forEach((x) => seen.add(x.date));
+    if (days >= 3) runs.push({ start: iso(start), end: iso(end), days, holidays: inRun });
+  }
+  return runs.sort((a, b) => a.start.localeCompare(b.start));
+}
 
 export type HolidayPayInput = { dailyRate: number; type: DayType; worked: boolean; hours: number; restDay: boolean };
 

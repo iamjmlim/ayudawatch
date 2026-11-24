@@ -20,6 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '/calculators' },
     ...CALCULATORS.map((c) => ({ path: `/calculators/${c.slug}`, lastModified: c.checkedOn })),
     ...TABLES.map((t) => ({ path: `/tables/${t.slug}`, lastModified: t.checkedOn })),
+    { path: '/holidays/2026', lastModified: '2026-11-25' },
+    { path: '/holidays/2027', lastModified: '2026-11-25' },
     { path: '/which-benefits' },
     { path: '/walang-pasok', lastModified: newest },
     ...CATEGORY_SLUGS.map((c) => ({ path: `/${c}`, lastModified: newest })),

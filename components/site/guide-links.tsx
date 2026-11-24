@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { BookOpen, Table2 } from 'lucide-react';
+import { BookOpen, CalendarDays, Table2 } from 'lucide-react';
 import { guidesFor } from '@/lib/guides';
 import { TABLES } from '@/lib/tables';
 import { getDictionary, type CategorySlug, type Locale } from '@/lib/i18n';
@@ -8,7 +8,7 @@ import { getDictionary, type CategorySlug, type Locale } from '@/lib/i18n';
 export function GuideLinks({ category, locale }: { category: CategorySlug; locale: Locale }) {
   const guides = guidesFor(category);
   const tables = TABLES.filter((t) => t.category === category);
-  if (!guides.length && !tables.length) return null;
+  if (!guides.length && !tables.length && category !== 'holiday') return null;
   const t = getDictionary(locale);
   const linkClass = 'inline-flex min-h-11 items-center gap-2 font-medium text-primary underline decoration-primary/40 underline-offset-4 hover:decoration-primary sm:min-h-0';
   return (
@@ -18,6 +18,15 @@ export function GuideLinks({ category, locale }: { category: CategorySlug; local
         {t.guidesIn(t.categories[category])}
       </h2>
       <ul className="mt-2 space-y-1">
+        {category === 'holiday' &&
+          ['2027', '2026'].map((y) => (
+            <li key={y}>
+              <Link href={`/${locale}/holidays/${y}`} className={linkClass}>
+                <CalendarDays className="size-4 shrink-0" aria-hidden />
+                {locale === 'fil' ? `Mga holiday sa Pilipinas ${y}` : `Philippine holidays ${y}`}
+              </Link>
+            </li>
+          ))}
         {tables.map((tb) => (
           <li key={tb.slug}>
             <Link href={`/${locale}/tables/${tb.slug}`} className={linkClass}>

@@ -1,5 +1,5 @@
 import type { CategorySlug } from './i18n.ts';
-import { HOLIDAY_PAY_CHECKED_ON, HOLIDAY_PAY_SOURCES } from './holiday-pay.ts';
+import { HOLIDAY_PAY_CHECKED_ON, HOLIDAY_PAY_SOURCES, HOLIDAYS_2027_SOURCES } from './holiday-pay.ts';
 
 // Benefit calculators. Every formula comes from the official page in `sources`
 // (read on `checkedOn`); the calculator components only do that arithmetic.
@@ -42,14 +42,14 @@ const CALCULATOR_LIST: Calculator[] = [
     category: 'holiday',
     checkedOn: HOLIDAY_PAY_CHECKED_ON,
     guideSlug: 'holiday-pay',
-    sources: HOLIDAY_PAY_SOURCES,
+    sources: [...HOLIDAY_PAY_SOURCES, ...HOLIDAYS_2027_SOURCES],
     en: {
-      title: 'Holiday pay calculator 2026',
+      title: 'Holiday pay calculator 2026–2027',
       description: 'Compute your pay for working (or not working) on a 2026 regular holiday or special day, including rest days and overtime, using DOLE’s official rates.',
       intro: 'Pick the holiday, enter your basic daily wage, and say whether you worked. The calculator uses DOLE’s 2026 rules: 200% on regular holidays, 130% on special days, with higher rates on rest days and for overtime.',
     },
     fil: {
-      title: 'Holiday pay calculator 2026',
+      title: 'Holiday pay calculator 2026–2027',
       description: 'Kuwentahin ang sahod mo sa pagtatrabaho (o hindi pagtatrabaho) sa regular holiday o special day sa 2026, kasama ang rest day at overtime, gamit ang opisyal na rate ng DOLE.',
       intro: 'Piliin ang holiday, ilagay ang arawang basic na sahod mo, at sabihin kung nagtrabaho ka. Ginagamit ng calculator ang mga patakaran ng DOLE para sa 2026: 200% sa regular holiday, 130% sa special day, at mas mataas sa rest day at overtime.',
     },
