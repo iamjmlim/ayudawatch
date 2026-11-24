@@ -68,10 +68,12 @@ export default async function SiteLayout({
           {getDictionary(lang).skipToContent}
         </a>
         {/* Shown on every page so no one mistakes this for an agency site: quiet, but always there. */}
-        <p className="mx-auto flex w-full max-w-5xl items-start gap-1.5 px-4 pt-2.5 text-xs leading-snug text-muted-foreground sm:px-6">
-          <Info className="mt-px size-3.5 shrink-0" aria-hidden />
-          {getDictionary(lang).notGov}
-        </p>
+        <div className="border-b border-border bg-paper">
+          <p className="mx-auto flex w-full max-w-5xl items-start gap-1.5 px-4 py-1.5 text-xs leading-snug text-muted-foreground sm:px-6">
+            <Info className="mt-px size-3.5 shrink-0" aria-hidden />
+            {getDictionary(lang).notGov}
+          </p>
+        </div>
         <SiteHeader locale={lang} />
         <main id="main" tabIndex={-1} className="mx-auto w-full max-w-5xl flex-1 px-4 outline-none sm:px-6">
           {children}
