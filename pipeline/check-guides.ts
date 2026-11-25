@@ -15,7 +15,8 @@ import { check, getDb } from './lib/db.ts';
 import { GUIDES } from '../lib/guides/index.ts';
 
 const DRY_RUN = process.argv.includes('--dry-run');
-const UA = 'AyudaWatch/0.1 (+https://ayudawatch.vercel.app)';
+const SITE_URL = (process.env.SITE_URL || 'https://ayudawatch.com').replace(/\/$/, '');
+const UA = `AyudaWatch/0.1 (+${SITE_URL})`;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO = process.env.GITHUB_REPOSITORY;
 const LABEL = 'guide-check';
@@ -120,7 +121,7 @@ async function main() {
       let result = await fetchSource(source.url);
       if ('error' in result && /timeout|aborted|fetch failed/i.test(result.error)) result = await fetchSource(source.url); // one retry
       const title = `Guide check: ${guide.en.title}`;
-      const guideLink = `https://ayudawatch.vercel.app/en/guides/${guide.slug}`;
+      const guideLink = `${SITE_URL}/en/guides/${guide.slug}`;
 
       if ('error' in result) {
         stats.unreachable++;

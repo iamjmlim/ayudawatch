@@ -19,7 +19,7 @@ import { firstSentences } from '../lib/excerpt.ts';
 const DRY_RUN = process.argv.includes('--dry-run');
 const DRAFT = process.argv.includes('--draft');
 const API_KEY = process.env.BUTTONDOWN_API_KEY;
-const SITE_URL = (process.env.SITE_URL || 'https://ayudawatch.vercel.app').replace(/\/$/, '');
+const SITE_URL = (process.env.SITE_URL || 'https://ayudawatch.com').replace(/\/$/, '');
 const DIGEST_HOUR = Number(process.env.DIGEST_HOUR ?? 7);
 const STORY_COUNT = Number(process.env.DIGEST_STORIES ?? 5);
 const SEND_STATUS = process.env.DIGEST_SEND_STATUS || 'about_to_send';

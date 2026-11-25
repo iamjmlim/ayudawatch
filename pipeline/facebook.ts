@@ -23,7 +23,7 @@ import { CALCULATORS } from '../lib/calculators.ts';
 const DRY_RUN = process.argv.includes('--dry-run');
 const PAGE_ID = process.env.FB_PAGE_ID;
 const TOKEN = process.env.FB_PAGE_TOKEN;
-const SITE_URL = (process.env.SITE_URL || 'https://ayudawatch.vercel.app').replace(/\/$/, '');
+const SITE_URL = (process.env.SITE_URL || 'https://ayudawatch.com').replace(/\/$/, '');
 const DAILY_LIMIT = Number(process.env.FB_DAILY_LIMIT ?? 12);
 const MIN_GAP_MINUTES = Number(process.env.FB_MIN_GAP_MINUTES ?? 60);
 const LANG = process.env.FB_LANG === 'en' ? 'en' : 'fil';
