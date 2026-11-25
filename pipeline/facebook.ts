@@ -242,7 +242,7 @@ type Reel = { key: string; date: string; hour: number; file: string; description
 const REELS: Reel[] = [
   {
     key: 'reel:thirteenth-month',
-    date: '2026-11-28',
+    date: '2026-11-26',
     hour: 19,
     file: 'content/reels/thirteenth-month.mp4',
     description:
