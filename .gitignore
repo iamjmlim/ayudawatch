@@ -40,3 +40,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Rendered short videos (scripts/videos)
+/content/videos
+/scripts/videos/node_modules
