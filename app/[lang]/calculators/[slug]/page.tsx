@@ -8,6 +8,10 @@ import { getDictionary, isLocale } from '@/lib/i18n';
 import { CALCULATORS, getCalculator } from '@/lib/calculators';
 import { CalculatorView } from '@/components/calculators/calculator-view';
 import { TABLES } from '@/lib/tables';
+import { CALCULATOR_CONTENT } from '@/lib/calculator-content';
+import { breadcrumbs, calculatorApp, graph } from '@/lib/structured-data';
+import { JsonLd } from '@/components/site/json-ld';
+import { Faqs, GuideSection } from '@/components/site/guide-section';
 
 type Params = Promise<{ lang: string; slug: string }>;
 
@@ -36,9 +40,19 @@ async function Body({ params }: { params: Params }) {
   if (!isLocale(lang) || !calc) notFound();
   const t = getDictionary(lang);
   const text = calc[lang];
+  const explainer = CALCULATOR_CONTENT[calc.slug]?.[lang];
+  const jsonLd = graph(
+    calculatorApp(lang, calc.slug, text.title, text.description),
+    breadcrumbs(lang, [
+      ['AyudaWatch', ''],
+      [t.calculators, '/calculators'],
+      [text.title, `/calculators/${calc.slug}`],
+    ]),
+  );
 
   return (
     <article className="mx-auto max-w-2xl py-10">
+      <JsonLd data={jsonLd} />
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
         <Link href={`/${lang}/calculators`} className="underline decoration-border underline-offset-4 hover:text-foreground hover:decoration-foreground">
           {t.calculators}
@@ -57,6 +71,11 @@ async function Body({ params }: { params: Params }) {
       <div className="mt-8">
         <CalculatorView slug={calc.slug} locale={lang} />
       </div>
+
+      {explainer?.sections.map((s) => (
+        <GuideSection key={s.heading} s={s} />
+      ))}
+      {explainer && explainer.faqs.length > 0 && <Faqs heading={lang === 'fil' ? 'Mga karaniwang tanong' : 'Common questions'} items={explainer.faqs} />}
 
       <aside className="mt-10 rounded-lg border border-border px-5 py-4 text-sm leading-relaxed">
         <p className="text-muted-foreground">{t.calcNotice}</p>

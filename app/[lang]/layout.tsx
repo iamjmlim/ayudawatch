@@ -26,7 +26,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const t = getDictionary(lang);
   return {
     metadataBase: new URL(SITE_URL),
-    title: { default: `${t.siteName}: ${t.tagline}`, template: `%s | ${t.siteName}` },
+    // The home page title names what people search for; other pages use the template.
+    title: {
+      default:
+        lang === 'fil'
+          ? `${t.siteName}: SSS, PhilHealth, Pag-IBIG, ayuda at mga calculator`
+          : `${t.siteName}: SSS, PhilHealth, Pag-IBIG benefits, ayuda news and calculators`,
+      template: `%s | ${t.siteName}`,
+    },
     description: t.description,
     alternates: {
       canonical: `/${lang}`,

@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Calculator, ExternalLink, ShieldCheck } from 'lucide-react';
 import { hreflang } from '@/lib/seo';
+import { breadcrumbs, graph } from '@/lib/structured-data';
+import { JsonLd } from '@/components/site/json-ld';
 import { getDictionary, isLocale, type Locale } from '@/lib/i18n';
 import { TABLES, getTable } from '@/lib/tables';
 import { SssContributionTable } from '@/components/tables/sss-table';
@@ -45,6 +47,21 @@ async function Body({ params }: { params: Params }) {
 
   return (
     <article className="mx-auto max-w-3xl py-10">
+      <JsonLd
+        data={graph(
+          {
+            '@type': 'Article',
+            headline: text.title,
+            inLanguage: lang === 'fil' ? 'fil' : 'en',
+            dateModified: table.checkedOn,
+            publisher: { '@type': 'Organization', name: 'AyudaWatch' },
+          },
+          breadcrumbs(lang, [
+            ['AyudaWatch', ''],
+            [text.title, '/tables/' + table.slug],
+          ]),
+        )}
+      />
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
         <Link href={`/${lang}/calculators`} className="underline decoration-border underline-offset-4 hover:text-foreground hover:decoration-foreground">
           {t.calculators}

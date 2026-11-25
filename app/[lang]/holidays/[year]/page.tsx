@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Calculator, ExternalLink, ShieldCheck } from 'lucide-react';
 import { hreflang } from '@/lib/seo';
+import { breadcrumbs, graph } from '@/lib/structured-data';
+import { JsonLd } from '@/components/site/json-ld';
 import { getDictionary, isLocale, type Locale } from '@/lib/i18n';
 import { HOLIDAY_PAY_CHECKED_ON, HOLIDAY_PAY_SOURCES, HOLIDAYS_2027_SOURCES, HOLIDAYS_BY_YEAR, longWeekends, type DayType } from '@/lib/holiday-pay';
 
@@ -93,6 +95,23 @@ async function Body({ params }: { params: Params }) {
 
   return (
     <article className="mx-auto max-w-3xl py-10">
+      <JsonLd
+        data={graph(
+          {
+            '@type': 'Article',
+            headline: c.title(year),
+            description: c.description(year),
+            inLanguage: lang === 'fil' ? 'fil' : 'en',
+            dateModified: HOLIDAY_PAY_CHECKED_ON,
+            citation: sources.map((s) => s.url),
+            publisher: { '@type': 'Organization', name: 'AyudaWatch' },
+          },
+          breadcrumbs(lang, [
+            ['AyudaWatch', ''],
+            [c.title(year), '/holidays/' + year],
+          ]),
+        )}
+      />
       <h1 className="font-serif text-4xl font-semibold tracking-tight text-balance">{c.title(year)}</h1>
       <p className="mt-4 text-lg leading-relaxed text-pretty text-muted-foreground">{c.intro(year, PROCLAMATION[year])}</p>
 

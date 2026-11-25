@@ -38,6 +38,35 @@ export function newsArticle(story: Story, lang: Locale) {
   };
 }
 
+/** Breadcrumb trail for Google ("Home › Calculators › …"); `items` are [name, path] from the top. */
+export function breadcrumbs(lang: Locale, items: [string, string][]) {
+  return {
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map(([name, path], i) => ({ '@type': 'ListItem', position: i + 1, name, item: `${SITE_URL}/${lang}${path}` })),
+  };
+}
+
+/** A free calculator, described as a web application. */
+export function calculatorApp(lang: Locale, slug: string, name: string, description: string) {
+  return {
+    '@type': 'WebApplication',
+    name,
+    description,
+    url: `${SITE_URL}/${lang}/calculators/${slug}`,
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'Any',
+    inLanguage: lang === 'fil' ? 'fil' : 'en',
+    isAccessibleForFree: true,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'PHP' },
+    publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  };
+}
+
+/** Wraps several schema.org nodes in one JSON-LD document. */
+export function graph(...nodes: object[]) {
+  return { '@context': 'https://schema.org', '@graph': nodes };
+}
+
 export function website(lang: Locale, description: string) {
   return {
     '@context': 'https://schema.org',

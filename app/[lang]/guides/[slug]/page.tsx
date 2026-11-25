@@ -6,7 +6,9 @@ import { Calculator, ExternalLink, ShieldCheck } from 'lucide-react';
 import { CALCULATORS } from '@/lib/calculators';
 import { hreflang } from '@/lib/seo';
 import { getDictionary, isLocale, type Locale } from '@/lib/i18n';
-import { GUIDES, getGuide, type GuideSection } from '@/lib/guides';
+import { GUIDES, getGuide } from '@/lib/guides';
+import { GuideSection } from '@/components/site/guide-section';
+import { breadcrumbs, graph } from '@/lib/structured-data';
 
 type Params = Promise<{ lang: string; slug: string }>;
 
@@ -47,33 +49,6 @@ function formatDate(iso: string, locale: Locale) {
   }).format(new Date(`${iso}T00:00:00Z`));
 }
 
-function Section({ s }: { s: GuideSection }) {
-  return (
-    <section className="mt-10">
-      <h2 className="font-serif text-2xl font-semibold tracking-tight">{s.heading}</h2>
-      {s.text && <p className="mt-3 leading-relaxed">{s.text}</p>}
-      {s.points && (
-        <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed marker:text-primary">
-          {s.points.map((p) => (
-            <li key={p}>{p}</li>
-          ))}
-        </ul>
-      )}
-      {s.steps && (
-        <ol className="mt-4 space-y-4">
-          {s.steps.map((p, i) => (
-            <li key={p} className="grid grid-cols-[2rem_1fr] gap-x-2 leading-relaxed">
-              <span className="font-serif text-xl leading-tight font-semibold text-primary">{i + 1}</span>
-              <span>{p}</span>
-            </li>
-          ))}
-        </ol>
-      )}
-      {s.note && <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{s.note}</p>}
-    </section>
-  );
-}
-
 async function GuideBody({ params }: { params: Params }) {
   const { lang, slug } = await params;
   const guide = getGuide(slug);
@@ -83,8 +58,8 @@ async function GuideBody({ params }: { params: Params }) {
   const checked = formatDate(guide.checkedOn, lang);
   const calc = CALCULATORS.find((c) => c.guideSlug === guide.slug);
 
-  const jsonLd = {
-    '@context': 'https://schema.org',
+  const jsonLd = graph(
+    {
     '@type': 'Article',
     headline: text.title,
     description: text.description,
@@ -93,7 +68,13 @@ async function GuideBody({ params }: { params: Params }) {
     mainEntityOfPage: `${SITE_URL}/${lang}/guides/${slug}`,
     publisher: { '@type': 'Organization', name: 'AyudaWatch', url: SITE_URL },
     citation: guide.sources.map((s) => s.url),
-  };
+    },
+    breadcrumbs(lang, [
+      ['AyudaWatch', ''],
+      [t.guides, '/guides'],
+      [text.title, '/guides/' + slug],
+    ]),
+  );
 
   return (
     <article className="mx-auto max-w-2xl py-10">
@@ -141,7 +122,7 @@ async function GuideBody({ params }: { params: Params }) {
       )}
 
       {text.sections.map((s) => (
-        <Section key={s.heading} s={s} />
+        <GuideSection key={s.heading} s={s} />
       ))}
 
       <p className="mt-12 border-t border-border pt-4 text-sm leading-relaxed text-muted-foreground">{t.guideNotice}</p>
