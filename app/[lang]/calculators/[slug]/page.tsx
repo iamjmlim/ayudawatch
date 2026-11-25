@@ -5,7 +5,8 @@ import { notFound } from 'next/navigation';
 import { Calculator as CalcIcon, ExternalLink } from 'lucide-react';
 import { hreflang } from '@/lib/seo';
 import { getDictionary, isLocale } from '@/lib/i18n';
-import { CALCULATORS, getCalculator } from '@/lib/calculators';
+import { CALCULATORS, RELATED, getCalculator } from '@/lib/calculators';
+import { LinkCard } from '@/components/site/link-card';
 import { CalculatorView } from '@/components/calculators/calculator-view';
 import { TABLES } from '@/lib/tables';
 import { CALCULATOR_CONTENT } from '@/lib/calculator-content';
@@ -76,6 +77,20 @@ async function Body({ params }: { params: Params }) {
         <GuideSection key={s.heading} s={s} />
       ))}
       {explainer && explainer.faqs.length > 0 && <Faqs heading={lang === 'fil' ? 'Mga karaniwang tanong' : 'Common questions'} items={explainer.faqs} />}
+
+      <section className="mt-10" aria-labelledby="related-calcs">
+        <h2 id="related-calcs" className="font-serif text-2xl font-semibold tracking-tight">
+          {lang === 'fil' ? 'Iba pang calculator' : 'Related calculators'}
+        </h2>
+        <div className="mt-4 grid gap-3">
+          {RELATED[calc.slug].map((rs) => {
+            const r = getCalculator(rs);
+            return r ? (
+              <LinkCard key={rs} href={`/${lang}/calculators/${rs}`} title={r[lang].title} icon={<CalcIcon className="size-5" aria-hidden />} />
+            ) : null;
+          })}
+        </div>
+      </section>
 
       <aside className="mt-10 rounded-lg border border-border px-5 py-4 text-sm leading-relaxed">
         <p className="text-muted-foreground">{t.calcNotice}</p>

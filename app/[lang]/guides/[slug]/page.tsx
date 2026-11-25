@@ -30,12 +30,11 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       canonical: `/${lang}/guides/${slug}`,
       languages: hreflang({ en: `/en/guides/${slug}`, fil: `/fil/guides/${slug}` }),
     },
-    // Setting openGraph here replaces the parent's, so the default share card is named explicitly.
+    // The share card comes from ./opengraph-image.tsx (the guide title).
     openGraph: {
       title: text.title,
       description: text.description,
       type: 'article',
-      images: [{ url: `/${lang}/opengraph-image`, width: 1200, height: 630 }],
     },
   };
 }

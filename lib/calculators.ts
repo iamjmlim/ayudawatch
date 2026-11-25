@@ -306,6 +306,21 @@ const DEMAND_ORDER: Calculator['slug'][] = [
 
 export const CALCULATORS: Calculator[] = [...CALCULATOR_LIST].sort((a, b) => DEMAND_ORDER.indexOf(a.slug) - DEMAND_ORDER.indexOf(b.slug));
 
+/** Calculators people often need next, shown as "Related calculators" on each calculator page. */
+export const RELATED: Record<Calculator['slug'], Calculator['slug'][]> = {
+  'thirteenth-month': ['take-home-pay', 'holiday-pay', 'separation-pay'],
+  'holiday-pay': ['overtime-pay', 'thirteenth-month', 'take-home-pay'],
+  'take-home-pay': ['contributions', 'thirteenth-month', 'overtime-pay'],
+  contributions: ['take-home-pay', 'sss-pension', 'pagibig-mp2'],
+  'pagibig-mp2': ['contributions', 'sss-pension', 'retirement-pay'],
+  'sss-pension': ['retirement-pay', 'contributions', 'pagibig-mp2'],
+  'sss-maternity': ['sss-sickness', 'contributions', 'take-home-pay'],
+  'sss-sickness': ['sss-maternity', 'contributions', 'take-home-pay'],
+  'overtime-pay': ['holiday-pay', 'take-home-pay', 'thirteenth-month'],
+  'separation-pay': ['thirteenth-month', 'retirement-pay', 'take-home-pay'],
+  'retirement-pay': ['sss-pension', 'separation-pay', 'pagibig-mp2'],
+};
+
 export function getCalculator(slug: string): Calculator | undefined {
   return CALCULATORS.find((c) => c.slug === slug);
 }
