@@ -39,6 +39,16 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             </Link>
           </li>
           <li>
+            <Link href={`/${locale}/contact`} className="inline-flex min-h-11 items-center hover:underline">
+              {locale === 'fil' ? 'Makipag-ugnayan' : 'Contact'}
+            </Link>
+          </li>
+          <li>
+            <Link href={`/${locale}/privacy`} className="inline-flex min-h-11 items-center hover:underline">
+              Privacy Policy
+            </Link>
+          </li>
+          <li>
             <Link href={`/${locale}/feed.xml`} className="inline-flex min-h-11 items-center hover:underline">
               RSS
             </Link>

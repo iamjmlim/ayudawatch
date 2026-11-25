@@ -15,6 +15,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: '', lastModified: newest },
     { path: '/about' },
     { path: '/corrections' },
+    { path: '/contact' },
+    { path: '/privacy', lastModified: '2026-11-26' },
     { path: '/guides' },
     ...GUIDES.map((g) => ({ path: `/guides/${g.slug}`, lastModified: g.checkedOn })),
     { path: '/calculators' },
