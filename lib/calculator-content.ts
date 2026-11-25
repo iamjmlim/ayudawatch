@@ -1,5 +1,7 @@
 import type { GuideSection } from './guides/types';
 import type { Calculator } from './calculators';
+import { BENEFIT_CONTENT } from './calculator-content-benefits';
+import { LABOR_CONTENT } from './calculator-content-labor';
 
 // Explainers shown under each calculator: how the result is computed, worked examples and
 // common questions. Every fact comes from the calculator's own `sources` (or the matching
@@ -8,7 +10,9 @@ import type { Calculator } from './calculators';
 export type Faq = { q: string; a: string };
 export type CalcExplainer = { sections: GuideSection[]; faqs: Faq[] };
 
-export const CALCULATOR_CONTENT: Partial<Record<Calculator['slug'], { en: CalcExplainer; fil: CalcExplainer }>> = {
+export const CALCULATOR_CONTENT: Record<Calculator['slug'], { en: CalcExplainer; fil: CalcExplainer }> = {
+  ...LABOR_CONTENT,
+  ...BENEFIT_CONTENT,
   // From the DOLE Revised Guidelines on PD 851 and Labor Advisory No. 21, s. 2026 (the 13th month guide's
   // sources), plus the ₱90,000 exclusion in RA 10963 (TRAIN), Sec. 32(B)(7)(e).
   'thirteenth-month': {
