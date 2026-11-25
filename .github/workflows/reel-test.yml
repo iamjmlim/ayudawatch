@@ -1,0 +1,36 @@
+name: Reel upload test
+
+# Uploads one scheduled Reel to the Facebook Page as an unpublished DRAFT, to check that
+# video uploads work before the real (public) posts go out. Run it from the Actions tab.
+on:
+  workflow_dispatch:
+    inputs:
+      reel:
+        description: Reel to upload as a draft (thirteenth-month, sss-maternity, long-weekends-2027)
+        required: true
+        default: thirteenth-month
+
+permissions:
+  contents: read
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: --no-deprecation
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Upload the Reel as a draft
+        run: npm run facebook -- --reel-draft=${{ inputs.reel }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}

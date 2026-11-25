@@ -231,9 +231,109 @@ function guideText(guide: (typeof GUIDES)[number]): { message: string; link: str
   return { message: lines.join('\n\n'), link };
 }
 
+// ---------- scheduled Reels ----------
+// Short videos rendered by scripts/videos (stored in content/reels) are uploaded as Page Reels on a
+// set date and hour (Philippine time), once each. The link goes in the first comment, because links
+// in Reel descriptions are not clickable. Posted keys are remembered in settings.fb_reel_state.
+//   npm run facebook -- --reel-draft=<key>   uploads that Reel as an unpublished draft (connection test)
+
+type Reel = { key: string; date: string; hour: number; file: string; description: string; comment: string };
+
+const REELS: Reel[] = [
+  {
+    key: 'reel:thirteenth-month',
+    date: '2026-11-28',
+    hour: 19,
+    file: 'content/reels/thirteenth-month.mp4',
+    description:
+      'Magkano ang 13th month pay mo? 💸\nFormula: kabuuang basic pay mula Enero–Disyembre ÷ 12. Walang tax hanggang ₱90,000, at may pro-rated ka pa rin kahit nag-resign ka. Deadline: Disyembre 24!\nLibreng calculator sa comments 👇\n#13thmonthpay #sahod #trabaho',
+    comment: `Kuwentahin ang sa'yo: ${SITE_URL}/fil/calculators/thirteenth-month`,
+  },
+  {
+    key: 'reel:sss-maternity',
+    date: '2026-12-02',
+    hour: 19,
+    file: 'content/reels/sss-maternity.mp4',
+    description:
+      'Hanggang ₱70,000 ang SSS maternity benefit mo 🤱\n105 araw para sa live birth, 120 araw para sa solo parent, 60 araw para sa miscarriage. Kailangan lang ng kahit 3 hulog sa 12 buwan bago ang semester ng panganganak.\nCalculator sa comments 👇\n#SSS #maternitybenefit #nanay',
+    comment: `Kuwentahin ang sa'yo: ${SITE_URL}/fil/calculators/sss-maternity`,
+  },
+  {
+    key: 'reel:long-weekends-2027',
+    date: '2026-12-26',
+    hour: 19,
+    file: 'content/reels/long-weekends-2027.mp4',
+    description:
+      '7 long weekend sa 2027! 🗓️ I-plan na ang bakasyon.\nMula sa opisyal na Proclamation No. 1427. Kumpletong listahan at holiday pay rates sa comments 👇\n#longweekend #holidays2027 #bakasyon',
+    comment: `Kumpletong listahan: ${SITE_URL}/fil/holidays/2027`,
+  },
+];
+
+type ReelState = { posted?: string[]; last_posted_at?: string; last_video_id?: string };
+
+async function getReelState(): Promise<ReelState> {
+  const row = check(await db.from('settings').select('value').eq('key', 'fb_reel_state').maybeSingle(), 'read reel state') as {
+    value: ReelState;
+  } | null;
+  return row?.value ?? {};
+}
+
+/** The Reel due now: its date has come (up to 2 days late, if runs were missed) and its hour has passed. */
+function dueReel(state: ReelState): Reel | undefined {
+  const ph = new Date(Date.now() + 8 * 3_600_000);
+  const today = ph.toISOString().slice(0, 10);
+  const twoDaysAgo = new Date(ph.getTime() - 2 * 86_400_000).toISOString().slice(0, 10);
+  return REELS.find(
+    (r) => !(state.posted ?? []).includes(r.key) && r.date <= today && r.date >= twoDaysAgo && (r.date < today || ph.getUTCHours() >= r.hour),
+  );
+}
+
+/** Uploads a Reel to the Page (Graph API resumable upload) and returns its video id. */
+async function uploadReel(reel: Reel, state: 'PUBLISHED' | 'DRAFT'): Promise<string> {
+  const { readFile } = await import('node:fs/promises');
+  const data = await readFile(reel.file);
+  const start = (await graph('POST', `${PAGE_ID}/video_reels`, { upload_phase: 'start' })) as { video_id?: string; upload_url?: string };
+  if (!start.video_id || !start.upload_url) throw new FacebookError('Facebook: Reel upload did not start', null);
+  const up = await fetch(start.upload_url, {
+    method: 'POST',
+    headers: { Authorization: `OAuth ${TOKEN}`, offset: '0', file_size: String(data.length) },
+    body: data,
+    signal: AbortSignal.timeout(120_000),
+  });
+  const upBody = (await up.json().catch(() => ({}))) as { success?: boolean; error?: { message: string; code: number } };
+  if (!up.ok || !upBody.success) throw new FacebookError(`Facebook ${up.status}: Reel upload failed (${upBody.error?.message ?? 'unknown'})`, upBody.error?.code ?? null);
+  await graph('POST', `${PAGE_ID}/video_reels`, {
+    upload_phase: 'finish',
+    video_id: start.video_id,
+    video_state: state,
+    description: reel.description,
+  });
+  return start.video_id;
+}
+
+/** Adds the link as the first comment. A missing comment permission must not undo the posted Reel. */
+async function commentLink(videoId: string, message: string) {
+  try {
+    await graph('POST', `${videoId}/comments`, { message });
+    console.log('   link comment added');
+  } catch (err) {
+    console.log(`   could not add the link comment: ${err instanceof Error ? err.message : err}`);
+  }
+}
+
 async function main() {
   if ((!PAGE_ID || !TOKEN) && !DRY_RUN) {
     console.log('Facebook not configured (FB_PAGE_ID / FB_PAGE_TOKEN missing). Skipping.');
+    return;
+  }
+
+  // Connection test: upload one Reel as an unpublished draft, touch nothing else.
+  const draftArg = process.argv.find((a) => a.startsWith('--reel-draft='));
+  if (draftArg) {
+    const reel = REELS.find((r) => r.key === `reel:${draftArg.split('=')[1]}`);
+    if (!reel) throw new Error(`Unknown reel: ${draftArg}. Known: ${REELS.map((r) => r.key).join(', ')}`);
+    const id = await uploadReel(reel, 'DRAFT');
+    console.log(`✓ Draft Reel uploaded (not public): ${id}`);
     return;
   }
   const settings = check(
@@ -260,16 +360,33 @@ async function main() {
   // Guide and special posts count toward the same daily cap and gap as news posts.
   const guideState = await getGuideState();
   const specialState = await getSpecialState();
+  const reelState = await getReelState();
   const guideAt = guideState.last_posted_at ?? null;
   const specialAt = specialState.last_posted_at ?? null;
+  const reelAt = reelState.last_posted_at ?? null;
   const dayStart = philippineDayStart();
-  const postedToday = today.length + (guideAt && guideAt >= dayStart ? 1 : 0) + (specialAt && specialAt >= dayStart ? 1 : 0);
+  const postedToday =
+    today.length + [guideAt, specialAt, reelAt].filter((d) => d && d >= dayStart).length;
   stats.postedToday = postedToday;
-  const lastAt = [last[0]?.fb_posted_at, guideAt, specialAt].filter(Boolean).map((d) => Date.parse(d!));
+  const lastAt = [last[0]?.fb_posted_at, guideAt, specialAt, reelAt].filter(Boolean).map((d) => Date.parse(d!));
   const minutesSinceLast = lastAt.length ? (Date.now() - Math.max(...lastAt)) / 60_000 : Infinity;
 
   if (postedToday >= DAILY_LIMIT) stats.reason = `daily limit reached (${postedToday}/${DAILY_LIMIT})`;
   else if (minutesSinceLast < MIN_GAP_MINUTES) stats.reason = `last post ${Math.round(minutesSinceLast)} min ago (gap ${MIN_GAP_MINUTES})`;
+
+  const reel = stats.reason ? undefined : dueReel(reelState);
+  if (reel) {
+    console.log(`✓ REEL (${reel.key}) from ${reel.file}:\n${reel.description.replace(/^/gm, '   ')}\n   first comment: ${reel.comment}\n`);
+    if (!DRY_RUN) {
+      const id = await uploadReel(reel, 'PUBLISHED');
+      const value: ReelState = { posted: [...(reelState.posted ?? []), reel.key], last_posted_at: new Date().toISOString(), last_video_id: id };
+      check(await db.from('settings').upsert({ key: 'fb_reel_state', value }), 'save reel state');
+      console.log(`   posted: ${id}`);
+      await commentLink(id, reel.comment);
+    }
+    stats.posted++;
+    stats.reason = 'reel posted';
+  }
 
   const special = stats.reason ? undefined : dueSpecial(specialState);
   const specialPost = special?.item();
