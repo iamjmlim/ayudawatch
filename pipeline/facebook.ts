@@ -259,6 +259,15 @@ const REELS: Reel[] = [
     comment: `Kuwentahin ang sa'yo: ${SITE_URL}/fil/calculators/sss-maternity`,
   },
   {
+    key: 'reel:holiday-pay-december',
+    date: '2026-12-20',
+    hour: 19,
+    file: 'content/reels/holiday-pay-december.mp4',
+    description:
+      'Magkano ang sahod mo sa Pasko at Rizal Day? 🎄\n200% kung nagtrabaho ka sa regular holiday (Dis 25 at 30), 130% sa special day (Dis 24 at 31). Hindi nagtrabaho? 100% pa rin sa regular holiday kung pumasok ka bago nito.\nCalculator sa comments 👇\n#holidaypay #Pasko #sahod',
+    comment: `Kuwentahin ang holiday pay mo: ${SITE_URL}/fil/calculators/holiday-pay`,
+  },
+  {
     key: 'reel:long-weekends-2027',
     date: '2026-12-26',
     hour: 19,

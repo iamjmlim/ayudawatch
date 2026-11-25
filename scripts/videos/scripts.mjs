@@ -11,6 +11,48 @@
 
 export const VIDEOS = [
   {
+    // From DOLE Labor Advisory No. 12, s. 2025 and Proclamation No. 1006 (the holiday pay guide and calculator).
+    slug: 'holiday-pay-december',
+    link: 'ayudawatch.com/fil/calculators/holiday-pay',
+    caption:
+      'Magkano ang sahod mo sa Pasko at Rizal Day? 🎄 200% sa regular holiday, 130% sa special day. Libreng holiday pay calculator sa ayudawatch.com #holidaypay #Pasko #sahod #DOLE',
+    slides: [
+      { kind: 'hook', kicker: 'HOLIDAY PAY DISYEMBRE', title: 'Magkano ang sahod mo sa Pasko?', sub: 'Dis 24, 25, 30 at 31', secs: 3 },
+      {
+        kind: 'list',
+        title: 'Mga holiday ngayong Disyembre',
+        items: [
+          ['Dis 24 · Bisperas ng Pasko', 'special non-working day'],
+          ['Dis 25 · Pasko', 'regular holiday'],
+          ['Dis 30 · Araw ni Rizal', 'regular holiday'],
+          ['Dis 31 · Huling Araw ng Taon', 'special non-working day'],
+        ],
+        secs: 5,
+      },
+      {
+        kind: 'list',
+        title: 'Kung nagtrabaho ka',
+        items: [
+          ['Regular holiday', '200% ng arawang sahod'],
+          ['Special non-working day', '130% ng arawang sahod'],
+          ['Regular holiday na rest day mo rin', '260% ng arawang sahod'],
+        ],
+        secs: 5,
+      },
+      { kind: 'big', title: 'Halimbawa', value: '₱800 × 200% = ₱1,600', sub: '8 oras na trabaho sa Pasko, kung ₱800 ang arawang sahod mo', secs: 4 },
+      {
+        kind: 'list',
+        title: 'Kung hindi ka nagtrabaho',
+        items: [
+          ['Regular holiday: 100%', 'kung pumasok o naka-paid leave ka sa araw ng trabaho bago nito'],
+          ['Special day: “no work, no pay”', 'maliban kung iba ang patakaran ng kompanya'],
+        ],
+        secs: 5,
+      },
+      { kind: 'cta', title: 'Kuwentahin ang sa’yo', sub: 'Libreng holiday pay calculator', secs: 4 },
+    ],
+  },
+  {
     slug: 'thirteenth-month',
     link: 'ayudawatch.com/fil/calculators/thirteenth-month',
     caption:
