@@ -18,7 +18,8 @@
     "digest:dry": "node --env-file-if-exists=.env.local pipeline/digest.ts --dry-run",
     "facebook:dry": "node --env-file-if-exists=.env.local pipeline/facebook.ts --dry-run",
     "summarize:dry": "node --env-file-if-exists=.env.local pipeline/summarize.ts --dry-run",
-    "check-guides": "node --env-file-if-exists=.env.local pipeline/check-guides.ts"
+    "check-guides": "node --env-file-if-exists=.env.local pipeline/check-guides.ts",
+    "weekly-report": "node --env-file-if-exists=.env.local pipeline/weekly-report.ts"
   },
   "engines": {
     "node": ">=24"

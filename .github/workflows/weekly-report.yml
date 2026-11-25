@@ -1,0 +1,35 @@
+name: Weekly report
+
+# Every Monday morning, opens a GitHub issue (label "weekly-report") with last week's numbers.
+# GitHub emails new issues that @mention you, so this lands in your inbox. Read-only.
+on:
+  schedule:
+    - cron: '0 0 * * 1' # Mondays 00:00 UTC = 8:00 AM Philippine time
+  workflow_dispatch: {} # "Run workflow" button for a report any time
+
+permissions:
+  contents: read
+  issues: write # to open this week's report and close last week's
+  actions: read # to count failed workflow runs
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: --no-deprecation
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Open the weekly report
+        run: npm run weekly-report
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          FB_PAGE_TOKEN: ${{ secrets.FB_PAGE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
