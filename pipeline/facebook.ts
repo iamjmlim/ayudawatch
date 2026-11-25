@@ -133,14 +133,69 @@ function calculatorItem(calc: (typeof CALCULATORS)[number]): Evergreen {
   return { key: `calc:${calc.slug}`, message: lines.join('\n\n'), link };
 }
 
-/** Guides and calculators interleaved: G1, C1, G2, C2, … then the remaining guides. */
+/** The "Philippine holidays <year>" page with its long weekends. */
+function holidaysItem(year: string): Evergreen {
+  const link = `${SITE_URL}/${LANG}/holidays/${year}`;
+  const lines =
+    LANG === 'fil'
+      ? [
+          `MGA HOLIDAY SA ${year}: kumpletong listahan at mga long weekend`,
+          `Lahat ng regular holiday at special non-working day sa ${year} mula sa opisyal na proklamasyon, kasama ang mga long weekend na puwedeng planuhin at ang holiday pay rates.`,
+          `Tingnan dito: ${link}`,
+          'Hindi ito website ng gobyerno. Laging kumpirmahin sa opisyal na ahensya.',
+        ]
+      : [
+          `PHILIPPINE HOLIDAYS ${year}: complete list and long weekends`,
+          `Every ${year} regular holiday and special non-working day from the official proclamation, with the long weekends you can plan around and the holiday pay rates.`,
+          `See the list: ${link}`,
+          'Not a government website. Always confirm with the official agency.',
+        ];
+  return { key: `page:holidays-${year}`, message: lines.join('\n\n'), link };
+}
+
+/** Guides and calculators interleaved: G1, C1, G2, C2, … then the remaining guides.
+ *  The holidays page follows the holiday pay calculator. */
 function rotation(): Evergreen[] {
   const items: Evergreen[] = [];
   for (let i = 0; i < Math.max(GUIDES.length, CALCULATORS.length); i++) {
     if (GUIDES[i]) items.push(guideItem(GUIDES[i]));
     if (CALCULATORS[i]) items.push(calculatorItem(CALCULATORS[i]));
+    if (CALCULATORS[i]?.slug === 'holiday-pay') items.push(holidaysItem('2027'));
   }
   return items;
+}
+
+// ---------- one-time seasonal posts ----------
+// Extra evergreen posts on set dates (Philippine time), on top of the weekly one.
+// Each is posted once; posted keys are remembered in settings.fb_special_state.
+const SPECIAL_POSTS: { key: string; date: string; hour: number; item: () => Evergreen | undefined }[] = [
+  {
+    // 13th month pay is due by December 24; searches peak in late November.
+    key: 'special:2026-11-27:thirteenth-month',
+    date: '2026-11-27',
+    hour: 11,
+    item: () => {
+      const calc = CALCULATORS.find((c) => c.slug === 'thirteenth-month');
+      return calc && calculatorItem(calc);
+    },
+  },
+];
+
+type SpecialState = { posted?: string[]; last_posted_at?: string; last_post_id?: string };
+
+async function getSpecialState(): Promise<SpecialState> {
+  const row = check(
+    await db.from('settings').select('value').eq('key', 'fb_special_state').maybeSingle(),
+    'read special post state',
+  ) as { value: SpecialState } | null;
+  return row?.value ?? {};
+}
+
+/** The special post due now (its date, from its hour, Philippine time) that was not posted yet. */
+function dueSpecial(state: SpecialState) {
+  const ph = new Date(Date.now() + 8 * 3_600_000);
+  const today = ph.toISOString().slice(0, 10);
+  return SPECIAL_POSTS.find((s) => s.date === today && ph.getUTCHours() >= s.hour && !(state.posted ?? []).includes(s.key));
 }
 
 function nextItem(state: GuideState): Evergreen {
@@ -202,16 +257,33 @@ async function main() {
     await db.from('stories').select('fb_posted_at').not('fb_posted_at', 'is', null).order('fb_posted_at', { ascending: false }).limit(1),
     'last post',
   ) as { fb_posted_at: string }[];
-  // Guide posts count toward the same daily cap and gap as news posts.
+  // Guide and special posts count toward the same daily cap and gap as news posts.
   const guideState = await getGuideState();
+  const specialState = await getSpecialState();
   const guideAt = guideState.last_posted_at ?? null;
-  const postedToday = today.length + (guideAt && guideAt >= philippineDayStart() ? 1 : 0);
+  const specialAt = specialState.last_posted_at ?? null;
+  const dayStart = philippineDayStart();
+  const postedToday = today.length + (guideAt && guideAt >= dayStart ? 1 : 0) + (specialAt && specialAt >= dayStart ? 1 : 0);
   stats.postedToday = postedToday;
-  const lastAt = [last[0]?.fb_posted_at, guideAt].filter(Boolean).map((d) => Date.parse(d!));
+  const lastAt = [last[0]?.fb_posted_at, guideAt, specialAt].filter(Boolean).map((d) => Date.parse(d!));
   const minutesSinceLast = lastAt.length ? (Date.now() - Math.max(...lastAt)) / 60_000 : Infinity;
 
   if (postedToday >= DAILY_LIMIT) stats.reason = `daily limit reached (${postedToday}/${DAILY_LIMIT})`;
   else if (minutesSinceLast < MIN_GAP_MINUTES) stats.reason = `last post ${Math.round(minutesSinceLast)} min ago (gap ${MIN_GAP_MINUTES})`;
+
+  const special = stats.reason ? undefined : dueSpecial(specialState);
+  const specialPost = special?.item();
+  if (special && specialPost) {
+    console.log(`✓ SPECIAL POST (${special.key}):\n${specialPost.message.replace(/^/gm, '   ')}\n`);
+    if (!DRY_RUN) {
+      const res = await graph('POST', `${PAGE_ID}/feed`, { message: specialPost.message, link: specialPost.link });
+      const value = { posted: [...(specialState.posted ?? []), special.key], last_posted_at: new Date().toISOString(), last_post_id: res.id };
+      check(await db.from('settings').upsert({ key: 'fb_special_state', value }), 'save special post state');
+      console.log(`   posted: ${res.id}`);
+    }
+    stats.posted++;
+    stats.reason = 'special post posted';
+  }
 
   if (!stats.reason && GUIDES.length + CALCULATORS.length > 0 && guideIsDue(guideState)) {
     const post = nextItem(guideState);
