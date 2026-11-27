@@ -8,16 +8,21 @@ export const contentType = 'image/png';
 export default async function Image({ params }: { params: Promise<{ lang: string; year: string }> }) {
   const { lang, year } = await params;
   const fil = lang === 'fil';
-  const known = Boolean(HOLIDAYS_BY_YEAR[year]);
-  const n = known ? longWeekends(year).length : 0;
+  const runs = HOLIDAYS_BY_YEAR[year] ? longWeekends(year) : [];
+  const day = (iso: string) => new Intl.DateTimeFormat(fil ? 'fil-PH' : 'en-PH', { timeZone: 'UTC', month: 'short', day: 'numeric' }).format(new Date(`${iso}T00:00:00Z`));
+  // The three longest breaks, in calendar order.
+  const top = [...runs]
+    .sort((a, b) => b.days - a.days || a.start.localeCompare(b.start))
+    .slice(0, 3)
+    .sort((a, b) => a.start.localeCompare(b.start));
+  const facts = top.map((r) => `${day(r.start)} – ${day(r.end)} · ${r.days} ${fil ? 'araw' : 'days'}`);
+
   return ogCard({
     kicker: fil ? 'MGA HOLIDAY' : 'HOLIDAYS',
     title: fil ? `Mga holiday sa Pilipinas ${year} at mga long weekend` : `Philippine holidays ${year} and long weekends`,
-    subtitle: known
-      ? fil
-        ? `${n} long weekend, kumpletong listahan mula sa opisyal na proklamasyon, at holiday pay rates.`
-        : `${n} long weekends, the complete list from the official proclamation, and holiday pay rates.`
-      : undefined,
     fil,
+    highlight: runs.length
+      ? { big: { value: String(runs.length), label: fil ? `long weekend sa ${year}` : `long weekends in ${year}` }, facts }
+      : undefined,
   });
 }
